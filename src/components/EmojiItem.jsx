@@ -25,8 +25,6 @@ const EmojiItem = ({ emoji }) => {
                     </Typography>
                     <Typography variant="caption">Artist: {emoji.artist}</Typography>
                     <br />
-                    <Typography variant="caption">Credits: {emoji.credit}</Typography>
-                    <br />
                 </>
             }
         >

@@ -19,7 +19,7 @@ const EmojiNotFound = ({ id, source }) => {
             </Button>
         </>
     );
-}
+};
 
 const Viewer = ({ emojis, status }) => {
     const { source, id } = useParams();

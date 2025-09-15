@@ -20,13 +20,25 @@ const App = () => {
               ? "Error loading emoji's"
               : "No emoji's found matching your criteria.";
 
+    const shuffleArray = (array) => {
+        // Loop from the last element to the second element
+        for (let i = array.length - 1; i > 0; i--) {
+            // Pick a random index from 0 to i (inclusive)
+            const j = Math.floor(Math.random() * (i + 1));
+
+            // Swap the elements at indices i and j
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    };
+
     useEffect(() => {
         getEmojis().then((data) => {
             if (data === undefined) {
                 setStatus("error");
                 return;
             } else {
-                setEmojis(data);
+                setEmojis(shuffleArray(data));
                 setStatus("ok");
             }
         });
@@ -41,6 +53,6 @@ const App = () => {
             </Routes>
         </ThemeProvider>
     );
-}
+};
 
 export default App;

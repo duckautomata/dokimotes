@@ -29,7 +29,12 @@ const Finder = ({ emojis, emptyText }) => {
     const filteredEmojis = useMemo(() => {
         return emojis.filter((emoji) => {
             const nameMatch = emoji.name.toLowerCase().includes(searchTerm.toLowerCase());
-            const tagMatch = emoji.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+            const tagMatch = emoji.tags.some(
+                (tag) =>
+                    tag !== "" &&
+                    (tag.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        searchTerm.toLowerCase().includes(tag.toLowerCase())),
+            );
             const searchMatch = searchTerm === "" || nameMatch || tagMatch;
 
             const typeMatch = filters.type === emoteType.ALL || emoji.type === filters.type;
