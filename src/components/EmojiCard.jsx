@@ -11,39 +11,20 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import LinkIcon from "@mui/icons-material/Link";
 import { Link } from "react-router-dom";
 import { ImageSearch } from "@mui/icons-material";
+import { useMediaQuery } from "@mui/material";
 
+/**
+ * @param {object} props
+ * @param {import("../emojis.js").Emoji} props.emoji
+ */
 const EmojiCard = ({ emoji }) => {
+    const isMobile = useMediaQuery("(max-width:768px)");
+    const maxWidth = isMobile ? "90vw" : "600px";
     const [snackbar, setSnackbar] = useState({ open: false, message: "" });
     const imageUrl = `/dokimotes/emotes/${emoji.source}/${emoji.id}`;
     const filename = `${emoji.name}-${emoji.id}`;
     const creditIsLink = emoji.credit.startsWith("https://");
     const isGif = emoji.id.endsWith(".gif");
-
-    const handleDownload = async () => {
-        try {
-            const response = await fetch(imageUrl);
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-
-            // Create a temporary anchor element to trigger the download
-            const a = document.createElement("a");
-            a.style.display = "none"; // Hide the element
-            a.href = url;
-            a.download = filename;
-
-            document.body.appendChild(a);
-            a.click();
-            URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-            setSnackbar({ open: true, message: "Image downloaded!" });
-        } catch (error) {
-            setSnackbar({ open: true, message: `Error: Could not download image: ${error}.` });
-        }
-    };
 
     const handleCopyImage = async () => {
         try {
@@ -62,7 +43,14 @@ const EmojiCard = ({ emoji }) => {
 
     return (
         <>
-            <Card sx={{ maxWidth: 600, margin: "2rem auto", boxShadow: 3 }}>
+            <Card
+                sx={{
+                    maxWidth: maxWidth,
+                    margin: { xs: "1rem auto", sm: "2rem auto" },
+                    boxShadow: 3,
+                    width: "100%",
+                }}
+            >
                 <CardMedia
                     component="img"
                     image={imageUrl}
@@ -83,7 +71,7 @@ const EmojiCard = ({ emoji }) => {
                     {creditIsLink ? (
                         <Typography variant="body1" color="text.secondary" component="p">
                             <strong>Credits:</strong>{" "}
-                            <a href={emoji.credit} target="_blank">
+                            <a href={emoji.credit} target="_blank" style={{ wordWrap: "break-word" }}>
                                 {emoji.credit}
                             </a>
                         </Typography>
@@ -96,22 +84,49 @@ const EmojiCard = ({ emoji }) => {
                         <strong>Tags:</strong> {emoji.tags.join(", ")}
                     </Typography>
                 </CardContent>
-                <CardActions sx={{ justifyContent: "center", paddingBottom: "16px" }}>
-                    <Box sx={{ display: "flex", gap: 2 }}>
+                <CardActions
+                    sx={{
+                        justifyContent: "center",
+                        paddingBottom: "16px",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: "flex",
+                            gap: 2,
+                            flexDirection: { xs: "column", sm: "row" },
+                            width: "100%",
+                        }}
+                    >
                         {!isGif && (
                             <Button
                                 variant="contained"
                                 disabled={isGif}
                                 startIcon={<ContentCopyIcon />}
                                 onClick={handleCopyImage}
+                                fullWidth
                             >
                                 Copy Image
                             </Button>
                         )}
-                        <Button variant="outlined" startIcon={<LinkIcon />} onClick={handleDownload}>
+                        <Button
+                            variant="outlined"
+                            startIcon={<LinkIcon />}
+                            fullWidth
+                            component="a"
+                            href={imageUrl}
+                            download={filename}
+                        >
                             Download Image
                         </Button>
-                        <Button component={Link} to="/" variant="contained" startIcon={<ImageSearch />} color="black">
+                        <Button
+                            component={Link}
+                            to="/"
+                            variant="contained"
+                            startIcon={<ImageSearch />}
+                            color="black"
+                            fullWidth
+                        >
                             Back to Gallery
                         </Button>
                     </Box>

@@ -1,16 +1,17 @@
 import emojisUrl from "./assets/emojis.tsv?url";
+// eslint-disable-next-line no-unused-vars
+import { EmojiSource, EmojiType } from "./store/types";
 
-export const emoteType = {
-    ALL: "all",
-    ANIMATED: "animated",
-    STILL: "still",
-};
-
-export const emoteSource = {
-    ALL: "all",
-    OFFICIAL: "official",
-    FANMADE: "fanmade",
-};
+/**
+ * @typedef {object} Emoji
+ * @property {string} id - The file name of the emoji (e.g., "001.png").
+ * @property {string} name - The display name of the emoji.
+ * @property {string} artist - The artist's name or handle.
+ * @property {string} credit - A URL or text credit for the artist.
+ * @property {EmojiType} type - The type of emoji.
+ * @property {EmojiSource} source - The source of the emoji.
+ * @property {string[]} tags - An array of search tags.
+ */
 
 const parseTSV = (text) => {
     // Split the text into lines and remove any trailing empty lines
@@ -42,6 +43,10 @@ const parseTSV = (text) => {
     return objects;
 };
 
+/**
+ * Fetches and parses the emojis.tsv file.
+ * @returns {Promise<Emoji[] | undefined>} An array of emoji objects, or undefined on error.
+ */
 export const getEmojis = async () => {
     try {
         const response = await fetch(emojisUrl);

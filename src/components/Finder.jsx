@@ -1,64 +1,60 @@
 import { Typography, Box, Grid, useMediaQuery } from "@mui/material";
 import EmojiFilter from "./EmojiFilter";
 import EmojiList from "./EmojiList";
-import { useMemo, useState } from "react";
-import { emoteSource, emoteType } from "../emojis";
+import { useMemo } from "react";
+import { useAppStore } from "../store/store";
+import { useShallow } from "zustand/react/shallow";
+import { EmojiSource, EmojiType } from "../store/types";
 
+/**
+ * @param {object} props
+ * @param {import("../emojis.js").Emoji[]} props.emojis
+ * @param {string} props.emptyText
+ */
 const Finder = ({ emojis, emptyText }) => {
     const isMobile = useMediaQuery("(max-width:768px)");
-    const minWidth = isMobile ? "100vw" : "50vw";
+    const isTablet = useMediaQuery("(max-width:1229px)");
+    const minWidth = isMobile ? "100vw" : isTablet ? "75vw" : "50vw";
 
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filters, setFilters] = useState({
-        type: "all", // 'all', 'animated', 'still'
-        source: "all", // 'all', 'official', 'fan-made'
-    });
+    const { searchText, emojiType, emojiSource } = useAppStore(
+        useShallow((state) => {
+            return {
+                searchText: state.searchText,
+                emojiType: state.emojiType,
+                emojiSource: state.emojiSource,
+            };
+        }),
+    );
 
-    const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
-    };
-
-    const handleFilterChange = (event) => {
-        const { name, value } = event.target;
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            [name]: value,
-        }));
-    };
-
+    /** @type {import("../emojis.js").Emoji[]} */
     const filteredEmojis = useMemo(() => {
         return emojis.filter((emoji) => {
-            const nameMatch = emoji.name.toLowerCase().includes(searchTerm.toLowerCase());
+            const nameMatch = emoji.name.toLowerCase().includes(searchText.toLowerCase());
             const tagMatch = emoji.tags.some(
                 (tag) =>
                     tag !== "" &&
-                    (tag.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        searchTerm.toLowerCase().includes(tag.toLowerCase())),
+                    (tag.toLowerCase().includes(searchText.toLowerCase()) ||
+                        searchText.toLowerCase().includes(tag.toLowerCase())),
             );
-            const searchMatch = searchTerm === "" || nameMatch || tagMatch;
+            const searchMatch = searchText === "" || nameMatch || tagMatch;
 
-            const typeMatch = filters.type === emoteType.ALL || emoji.type === filters.type;
-            const sourceMatch = filters.source === emoteSource.ALL || emoji.source === filters.source;
+            const typeMatch = emojiType === EmojiType.ALL || emoji.type === emojiType;
+            const sourceMatch = emojiSource === EmojiSource.ALL || emoji.source === emojiSource;
 
             return searchMatch && typeMatch && sourceMatch;
         });
-    }, [searchTerm, filters, emojis]);
+    }, [searchText, emojiType, emojiSource, emojis]);
 
     return (
         <Grid container direction="column" minWidth={minWidth} sx={{ py: 3, height: "100vh" }}>
             <Grid size={{ xs: 12 }}>
-                <Typography variant="h3" component="h1" gutterBottom align="center" sx={{ mb: 3 }}>
+                <Typography variant="h4" component="h4" gutterBottom align="center" sx={{ mb: 3 }}>
                     Doki Emote Finder
                 </Typography>
             </Grid>
 
             <Grid size={{ xs: 12 }}>
-                <EmojiFilter
-                    searchTerm={searchTerm}
-                    filters={filters}
-                    onSearchChange={handleSearchChange}
-                    onFilterChange={handleFilterChange}
-                />
+                <EmojiFilter />
             </Grid>
 
             <Grid

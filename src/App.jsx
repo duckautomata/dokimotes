@@ -7,10 +7,18 @@ import { getEmojis } from "./emojis";
 import Finder from "./components/Finder";
 import { Route, Routes } from "react-router-dom";
 import Viewer from "./components/Viewer";
+import { useAppStore } from "./store/store";
 
 const App = () => {
+    const theme = useAppStore((state) => state.theme);
     const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
     let colorTheme = prefersDarkMode ? darkTheme : lightTheme;
+    if (theme === "light") {
+        colorTheme = lightTheme;
+    } else if (theme === "dark") {
+        colorTheme = darkTheme;
+    }
+
     const [emojis, setEmojis] = useState([]);
     const [status, setStatus] = useState("loading");
     const emptyText =

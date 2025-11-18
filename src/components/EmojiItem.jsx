@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 
 const ITEM_SIZE = 128; // Actual emoji image size (should match EmojiList's ITEM_SIZE_IN_CELL)
 
+/**
+ * @param {object} props
+ * @param {import("../emojis.js").Emoji} props.emoji
+ */
 const EmojiItem = ({ emoji }) => {
     const navigate = useNavigate();
 

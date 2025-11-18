@@ -21,6 +21,11 @@ const EmojiNotFound = ({ id, source }) => {
     );
 };
 
+/**
+ * @param {object} props
+ * @param {import("../emojis.js").Emoji[]} props.emojis
+ * @param {string} props.status
+ */
 const Viewer = ({ emojis, status }) => {
     const { source, id } = useParams();
     const emoji = emojis.find((e) => e.id.includes(id) && e.source === source);
@@ -32,7 +37,6 @@ const Viewer = ({ emojis, status }) => {
                 alignItems: "center",
                 justifyContent: "center",
                 textAlign: "center",
-                padding: 3,
             }}
         >
             {status === "loading" ? (
