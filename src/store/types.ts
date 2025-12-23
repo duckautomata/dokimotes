@@ -37,6 +37,7 @@ export interface SettingsSlice {
     devMode: boolean;
     membershipKey: string;
     membershipInfo: { channel: string; expiresAt: string } | null;
+    useVirtualList: boolean;
     setTheme: (theme: SettingsSlice["theme"]) => void;
     setDensity: (density: SettingsSlice["density"]) => void;
     setTimeFormat: (format: SettingsSlice["timeFormat"]) => void;
@@ -47,6 +48,7 @@ export interface SettingsSlice {
     setDevMode: (value: boolean) => void;
     setMembershipKey: (key: string) => void;
     setMembershipInfo: (info: SettingsSlice["membershipInfo"]) => void;
+    setUseVirtualList: (value: boolean) => void;
 }
 
 // The combined store type
