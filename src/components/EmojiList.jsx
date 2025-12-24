@@ -2,6 +2,10 @@ import { VirtuosoGrid } from "react-virtuoso";
 import EmojiItem from "./EmojiItem";
 import { Box } from "@mui/material";
 
+/**
+ * @typedef {import('../emojis.js').Emoji} Emoji
+ */
+
 const CELL_PADDING = 16; // Total padding/margin for each cell (for spacing)
 const ITEM_SIZE_IN_CELL = 128; // Actual emoji image size (should match EmojiItem's ITEM_SIZE)
 
@@ -31,7 +35,7 @@ const ItemContainer = (props) => (
 
 /**
  * @param {object} props
- * @param {import("../emojis.js").Emoji[]} props.emojis
+ * @param {Emoji[]} props.emojis
  */
 const EmojiList = ({ emojis }) => {
     return (

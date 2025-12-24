@@ -3,6 +3,10 @@ import EmojiCard from "./EmojiCard";
 import { Box, Button, Typography } from "@mui/material";
 import { SentimentDissatisfied } from "@mui/icons-material";
 
+/**
+ * @typedef {import('../emojis.js').Emoji} Emoji
+ */
+
 const EmojiNotFound = ({ id, source }) => {
     return (
         <>
@@ -23,7 +27,7 @@ const EmojiNotFound = ({ id, source }) => {
 
 /**
  * @param {object} props
- * @param {import("../emojis.js").Emoji[]} props.emojis
+ * @param {Emoji[]} props.emojis
  * @param {string} props.status
  */
 const Viewer = ({ emojis, status }) => {

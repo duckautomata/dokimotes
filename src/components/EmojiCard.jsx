@@ -14,8 +14,12 @@ import { ImageSearch } from "@mui/icons-material";
 import { useMediaQuery } from "@mui/material";
 
 /**
+ * @typedef {import('../emojis.js').Emoji} Emoji
+ */
+
+/**
  * @param {object} props
- * @param {import("../emojis.js").Emoji} props.emoji
+ * @param {Emoji} props.emoji
  */
 const EmojiCard = ({ emoji }) => {
     const isMobile = useMediaQuery("(max-width:768px)");
@@ -34,6 +38,16 @@ const EmojiCard = ({ emoji }) => {
             setSnackbar({ open: true, message: "Image copied to clipboard!" });
         } catch (error) {
             setSnackbar({ open: true, message: `Error: Could not copy image: ${error}.` });
+        }
+    };
+
+    const handleCopyImageURL = async () => {
+        try {
+            const fullPath = `${window.location.origin}${imageUrl}`;
+            await navigator.clipboard.writeText(fullPath);
+            setSnackbar({ open: true, message: "Image link copied to clipboard!" });
+        } catch (error) {
+            setSnackbar({ open: true, message: `Error: Could not copy image link: ${error}.` });
         }
     };
 
@@ -109,6 +123,9 @@ const EmojiCard = ({ emoji }) => {
                                 Copy Image
                             </Button>
                         )}
+                        <Button variant="contained" startIcon={<LinkIcon />} onClick={handleCopyImageURL} fullWidth>
+                            Copy Link
+                        </Button>
                         <Button
                             variant="outlined"
                             startIcon={<LinkIcon />}

@@ -4,11 +4,15 @@ import EmojiList from "./EmojiList";
 import { useMemo } from "react";
 import { useAppStore } from "../store/store";
 import { useShallow } from "zustand/react/shallow";
-import { EmojiSource, EmojiType } from "../store/types";
+import { emojiFilter } from "../logic/filtering.js";
+
+/**
+ * @typedef {import('../emojis.js').Emoji} Emoji
+ */
 
 /**
  * @param {object} props
- * @param {import("../emojis.js").Emoji[]} props.emojis
+ * @param {Emoji[]} props.emojis
  * @param {string} props.emptyText
  */
 const Finder = ({ emojis, emptyText }) => {
@@ -26,23 +30,8 @@ const Finder = ({ emojis, emptyText }) => {
         }),
     );
 
-    /** @type {import("../emojis.js").Emoji[]} */
     const filteredEmojis = useMemo(() => {
-        return emojis.filter((emoji) => {
-            const nameMatch = emoji.name.toLowerCase().includes(searchText.toLowerCase());
-            const tagMatch = emoji.tags.some(
-                (tag) =>
-                    tag !== "" &&
-                    (tag.toLowerCase().includes(searchText.toLowerCase()) ||
-                        searchText.toLowerCase().includes(tag.toLowerCase())),
-            );
-            const searchMatch = searchText === "" || nameMatch || tagMatch;
-
-            const typeMatch = emojiType === EmojiType.ALL || emoji.type === emojiType;
-            const sourceMatch = emojiSource === EmojiSource.ALL || emoji.source === emojiSource;
-
-            return searchMatch && typeMatch && sourceMatch;
-        });
+        return emojiFilter(emojis, searchText, emojiType, emojiSource);
     }, [searchText, emojiType, emojiSource, emojis]);
 
     return (

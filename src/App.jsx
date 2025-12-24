@@ -8,6 +8,7 @@ import Finder from "./components/Finder";
 import { Route, Routes } from "react-router-dom";
 import Viewer from "./components/Viewer";
 import { useAppStore } from "./store/store";
+import UpdateAlert from "./components/UpdateAlert";
 
 const App = () => {
     const theme = useAppStore((state) => state.theme);
@@ -55,6 +56,7 @@ const App = () => {
     return (
         <ThemeProvider theme={colorTheme}>
             <CssBaseline />
+            <UpdateAlert />
             <Routes>
                 <Route path="/view/:source/:id" element={<Viewer emojis={emojis} status={status} />} />
                 <Route path="*" element={<Finder emojis={emojis} emptyText={emptyText} />} />
