@@ -20,19 +20,25 @@ const Finder = ({ emojis, emptyText }) => {
     const isTablet = useMediaQuery("(max-width:1229px)");
     const minWidth = isMobile ? "100vw" : isTablet ? "75vw" : "50vw";
 
-    const { searchText, emojiType, emojiSource } = useAppStore(
+    const { searchText, emojiType, emojiSource, artistFilter } = useAppStore(
         useShallow((state) => {
             return {
                 searchText: state.searchText,
                 emojiType: state.emojiType,
                 emojiSource: state.emojiSource,
+                artistFilter: state.artistFilter,
             };
         }),
     );
 
+    const artists = useMemo(() => {
+        const artistSet = new Set(emojis.map((e) => e.artist));
+        return Array.from(artistSet).sort();
+    }, [emojis]);
+
     const filteredEmojis = useMemo(() => {
-        return emojiFilter(emojis, searchText, emojiType, emojiSource);
-    }, [searchText, emojiType, emojiSource, emojis]);
+        return emojiFilter(emojis, searchText, emojiType, emojiSource, artistFilter);
+    }, [searchText, emojiType, emojiSource, artistFilter, emojis]);
 
     return (
         <Grid container direction="column" minWidth={minWidth} sx={{ py: 3, height: "100vh" }}>
@@ -43,7 +49,7 @@ const Finder = ({ emojis, emptyText }) => {
             </Grid>
 
             <Grid size={{ xs: 12 }}>
-                <EmojiFilter />
+                <EmojiFilter artists={artists} />
             </Grid>
 
             <Grid

@@ -7,6 +7,8 @@ export const createFilterSlice: AppSliceCreator<FilterSlice> = (set) => ({
     setEmojiType: (t) => set({ emojiType: t }),
     emojiSource: EmojiSource.ALL,
     setEmojiSource: (s) => set({ emojiSource: s }),
+    artistFilter: "",
+    setArtistFilter: (artist) => set({ artistFilter: artist }),
     scrollIndex: 0,
     setScrollIndex: (i) => set({ scrollIndex: i }),
 });

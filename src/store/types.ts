@@ -22,6 +22,8 @@ export interface FilterSlice {
     setEmojiType: (t: EmojiType) => void;
     emojiSource: EmojiSource;
     setEmojiSource: (s: EmojiSource) => void;
+    artistFilter: string;
+    setArtistFilter: (artist: string) => void;
     scrollIndex: number;
     setScrollIndex: (i: number) => void;
 }
