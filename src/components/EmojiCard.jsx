@@ -6,12 +6,14 @@ import CardActions from "@mui/material/CardActions";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Snackbar from "@mui/material/Snackbar";
+import SnackbarContent from "@mui/material/SnackbarContent";
 import Box from "@mui/material/Box";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import LinkIcon from "@mui/icons-material/Link";
 import { Link } from "react-router-dom";
 import { ImageSearch } from "@mui/icons-material";
 import { useMediaQuery } from "@mui/material";
+import { cdn, edit_emote_form } from "../config";
 
 /**
  * @typedef {import('../emojis.js').Emoji} Emoji
@@ -25,14 +27,25 @@ const EmojiCard = ({ emoji }) => {
     const isMobile = useMediaQuery("(max-width:768px)");
     const maxWidth = isMobile ? "90vw" : "600px";
     const [snackbar, setSnackbar] = useState({ open: false, message: "" });
-    const imageUrl = `/dokimotes/emotes/${emoji.source}/${emoji.id}`;
-    const filename = `${emoji.name}-${emoji.id}`;
+    const originalUrl = `${cdn}/${emoji.image_id}${emoji.image_ext}`;
+    const previewUrl = `${cdn}/${emoji.image_id}_p.webp`;
+    const filename = `${emoji.emote_id}${emoji.image_ext}`;
+    const downloadUrl = `${originalUrl}?download=true&name=${encodeURIComponent(filename)}`;
+    const editFormUrl = edit_emote_form(
+        emoji.emote_id,
+        emoji.name,
+        emoji.artist,
+        emoji.credit,
+        emoji.type,
+        emoji.source,
+        emoji.tags.join(", ")
+    );
     const creditIsLink = emoji.credit.startsWith("https://");
-    const isGif = emoji.id.endsWith(".gif");
+    const isAnimated = emoji.type === "animated";
 
     const handleCopyImage = async () => {
         try {
-            const response = await fetch(imageUrl);
+            const response = await fetch(originalUrl);
             const blob = await response.blob();
             await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
             setSnackbar({ open: true, message: "Image copied to clipboard!" });
@@ -43,8 +56,7 @@ const EmojiCard = ({ emoji }) => {
 
     const handleCopyImageURL = async () => {
         try {
-            const fullPath = `${window.location.origin}${imageUrl}`;
-            await navigator.clipboard.writeText(fullPath);
+            await navigator.clipboard.writeText(previewUrl);
             setSnackbar({ open: true, message: "Image link copied to clipboard!" });
         } catch (error) {
             setSnackbar({ open: true, message: `Error: Could not copy image link: ${error}.` });
@@ -60,23 +72,35 @@ const EmojiCard = ({ emoji }) => {
             <Card
                 sx={{
                     maxWidth: maxWidth,
-                    margin: { xs: "1rem auto", sm: "2rem auto" },
-                    boxShadow: 3,
+                    margin: { xs: "2rem auto", sm: "3rem auto" },
+                    boxShadow: "0 16px 40px rgba(0,0,0,0.12)",
+                    borderRadius: 4,
                     width: "100%",
+                    background: (theme) =>
+                        theme.palette.mode === "dark"
+                            ? "rgba(36, 36, 36, 0.45)"
+                            : "rgba(255, 255, 255, 0.45)",
+                    backdropFilter: "blur(12px)",
+                    border: "1px solid",
+                    borderColor: (theme) =>
+                        theme.palette.mode === "dark"
+                            ? "rgba(255, 255, 255, 0.08)"
+                            : "rgba(0, 0, 0, 0.05)",
                 }}
             >
                 <CardMedia
                     component="img"
-                    image={imageUrl}
+                    image={originalUrl}
                     alt={emoji.name}
                     sx={{
                         width: "100%",
                         height: "auto",
                         backgroundColor: "transparent",
+                        p: 2,
                     }}
                 />
                 <CardContent sx={{ textAlign: "center" }}>
-                    <Typography gutterBottom variant="h4" component="h1">
+                    <Typography gutterBottom variant="h3" component="h1" fontWeight="700">
                         {emoji.name}
                     </Typography>
                     <Typography variant="body1" color="text.secondary" component="p">
@@ -101,7 +125,8 @@ const EmojiCard = ({ emoji }) => {
                 <CardActions
                     sx={{
                         justifyContent: "center",
-                        paddingBottom: "16px",
+                        paddingBottom: "24px",
+                        paddingX: "24px",
                     }}
                 >
                     <Box
@@ -112,10 +137,10 @@ const EmojiCard = ({ emoji }) => {
                             width: "100%",
                         }}
                     >
-                        {!isGif && (
+                        {!isAnimated && (
                             <Button
                                 variant="contained"
-                                disabled={isGif}
+                                disabled={isAnimated}
                                 startIcon={<ContentCopyIcon />}
                                 onClick={handleCopyImage}
                                 fullWidth
@@ -131,7 +156,7 @@ const EmojiCard = ({ emoji }) => {
                             startIcon={<LinkIcon />}
                             fullWidth
                             component="a"
-                            href={imageUrl}
+                            href={downloadUrl}
                             download={filename}
                         >
                             Download Image
@@ -150,13 +175,40 @@ const EmojiCard = ({ emoji }) => {
                 </CardActions>
             </Card>
 
+            <Box sx={{ mt: 2, textAlign: "center" }}>
+                <Typography variant="body1" sx={{ mb: 1.5, color: "text.secondary" }}>
+                    Something wrong with this emote?
+                </Typography>
+                <Button
+                    variant="outlined"
+                    color="secondary"
+                    component="a"
+                    href={editFormUrl}
+                    target="_blank"
+                    sx={{ borderRadius: "24px", textTransform: "none", fontWeight: 600 }}
+                >
+                    Suggest an Edit
+                </Button>
+            </Box>
+
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={3000}
                 onClose={handleCloseSnackbar}
-                message={snackbar.message}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-            />
+            >
+                <SnackbarContent
+                    message={snackbar.message}
+                    sx={{
+                        backgroundColor: (theme) =>
+                            theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.9)" : "rgba(36, 36, 36, 0.9)",
+                        color: (theme) =>
+                            theme.palette.mode === "dark" ? "#000000" : "#ffffff",
+                        fontWeight: 600,
+                        backdropFilter: "blur(8px)",
+                    }}
+                />
+            </Snackbar>
         </>
     );
 };

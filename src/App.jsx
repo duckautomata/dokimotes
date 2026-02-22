@@ -26,8 +26,8 @@ const App = () => {
         status === "loading"
             ? "Loading"
             : status === "error"
-              ? "Error loading emoji's"
-              : "No emoji's found matching your criteria.";
+                ? "Error loading emoji's"
+                : "No emoji's found matching your criteria.";
 
     const shuffleArray = (array) => {
         // Loop from the last element to the second element
@@ -58,7 +58,7 @@ const App = () => {
             <CssBaseline />
             <UpdateAlert />
             <Routes>
-                <Route path="/view/:source/:id" element={<Viewer emojis={emojis} status={status} />} />
+                <Route path="/view/:emote_id" element={<Viewer emojis={emojis} status={status} />} />
                 <Route path="*" element={<Finder emojis={emojis} emptyText={emptyText} />} />
             </Routes>
         </ThemeProvider>

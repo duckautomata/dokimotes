@@ -7,7 +7,7 @@ import { SentimentDissatisfied } from "@mui/icons-material";
  * @typedef {import('../emojis.js').Emoji} Emoji
  */
 
-const EmojiNotFound = ({ id, source }) => {
+const EmojiNotFound = ({ emote_id }) => {
     return (
         <>
             <SentimentDissatisfied sx={{ fontSize: 80, color: "text.secondary", marginBottom: 2 }} />
@@ -15,7 +15,7 @@ const EmojiNotFound = ({ id, source }) => {
                 Dokimote Not Found
             </Typography>
             <Typography color="text.secondary" sx={{ maxWidth: 400, mb: 3 }}>
-                That emote with ID &#34;{id}&#34; and source &#34;{source}&#34; does not seem to exist. It might have
+                That emote with ID &#34;{emote_id}&#34; does not seem to exist. It might have
                 been removed or the link is incorrect.
             </Typography>
             <Button component={Link} to="/" variant="contained" color="secondary">
@@ -31,8 +31,8 @@ const EmojiNotFound = ({ id, source }) => {
  * @param {string} props.status
  */
 const Viewer = ({ emojis, status }) => {
-    const { source, id } = useParams();
-    const emoji = emojis.find((e) => e.id.includes(id) && e.source === source);
+    const { emote_id } = useParams();
+    const emoji = emojis.find((e) => e.emote_id === emote_id);
     return (
         <Box
             sx={{
@@ -46,7 +46,7 @@ const Viewer = ({ emojis, status }) => {
             {status === "loading" ? (
                 <Typography>Loading</Typography>
             ) : (
-                <>{emoji === undefined ? <EmojiNotFound id={id} source={source} /> : <EmojiCard emoji={emoji} />}</>
+                <>{emoji === undefined ? <EmojiNotFound emote_id={emote_id} /> : <EmojiCard emoji={emoji} />}</>
             )}
         </Box>
     );

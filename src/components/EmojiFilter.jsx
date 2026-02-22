@@ -20,7 +20,25 @@ const EmojiFilter = ({ artists }) => {
     const setEmojiSource = useAppStore((state) => state.setEmojiSource);
     const setArtistFilter = useAppStore((state) => state.setArtistFilter);
     return (
-        <Paper elevation={2} sx={{ p: 2, mb: 2, borderRadius: 2 }}>
+        <Paper
+            elevation={0}
+            sx={{
+                p: 3,
+                mb: 4,
+                borderRadius: 4,
+                background: (theme) =>
+                    theme.palette.mode === "dark"
+                        ? "rgba(36, 36, 36, 0.45)"
+                        : "rgba(255, 255, 255, 0.45)",
+                backdropFilter: "blur(12px)",
+                border: "1px solid",
+                borderColor: (theme) =>
+                    theme.palette.mode === "dark"
+                        ? "rgba(255, 255, 255, 0.08)"
+                        : "rgba(0, 0, 0, 0.05)",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.05)",
+            }}
+        >
             <Grid container spacing={2} alignItems="center" justifyContent="center">
                 <Grid size={{ xs: 12, md: 3 }}>
                     <TextField
@@ -45,7 +63,7 @@ const EmojiFilter = ({ artists }) => {
                         >
                             <MenuItem value={EmojiType.ALL}>All Types</MenuItem>
                             <MenuItem value={EmojiType.ANIMATED}>Animated</MenuItem>
-                            <MenuItem value={EmojiType.STILL}>Still</MenuItem>
+                            <MenuItem value={EmojiType.STATIC}>Static</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>

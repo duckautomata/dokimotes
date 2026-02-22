@@ -1,10 +1,12 @@
-import emojisUrl from "./assets/emojis.tsv?url";
+import { cdn } from "./config";
 // eslint-disable-next-line no-unused-vars
 import { EmojiSource, EmojiType } from "./store/types";
 
 /**
  * @typedef {object} Emoji
- * @property {string} id - The file name of the emoji (e.g., "001.png").
+ * @property {string} emote_id - A unique id for each emote.
+ * @property {string} image_id - Used to fetch the image from the cdn.
+ * @property {string} image_ext - Used to fetch the image from the cdn.
  * @property {string} name - The display name of the emoji.
  * @property {string} artist - The artist's name or handle.
  * @property {string} credit - A URL or text credit for the artist.
@@ -32,6 +34,8 @@ const parseTSV = (text) => {
             const value = values[index] === "" ? "Unknown" : values[index];
             if (header === "tags") {
                 obj[header] = value.split(",").map((tag) => tag.trim());
+            } else if (header === "Name") {
+                obj["name"] = value;
             } else {
                 obj[header] = value;
             }
@@ -49,7 +53,7 @@ const parseTSV = (text) => {
  */
 export const getEmojis = async () => {
     try {
-        const response = await fetch(emojisUrl);
+        const response = await fetch(`${cdn}/emotes.tsv`);
         const text = await response.text();
         const parsedData = parseTSV(text);
         return parsedData;

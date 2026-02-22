@@ -1,6 +1,7 @@
 import { Box, Tooltip, Typography } from "@mui/material";
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
+import { cdn } from "../config";
 
 /**
  * @typedef {import('../emojis.js').Emoji} Emoji
@@ -20,12 +21,13 @@ const EmojiItem = ({ emoji }) => {
     }
 
     const handleClick = () => {
-        navigate(`/view/${emoji.source}/${emoji.id.split(".")[0]}`);
+        navigate(`/view/${emoji.emote_id}`);
     };
 
     return (
         <Tooltip
             arrow
+            disableInteractive
             title={
                 <>
                     <Typography color="inherit" variant="subtitle2">
@@ -48,15 +50,22 @@ const EmojiItem = ({ emoji }) => {
                     cursor: "pointer",
                     padding: "4px",
                     "&:hover": {
-                        backgroundColor: "action.hover",
-                        transform: "scale(1.1)",
+                        backgroundColor: (theme) =>
+                            theme.palette.mode === "dark" ? "rgba(49, 214, 198, 0.15)" : "rgba(18, 100, 91, 0.1)",
+                        transform: "scale(1.15) translateY(-4px)",
                         zIndex: 1,
+                        boxShadow: (theme) =>
+                            theme.palette.mode === "dark"
+                                ? "0px 10px 20px rgba(49, 214, 198, 0.2)"
+                                : "0px 10px 20px rgba(18, 100, 91, 0.15)",
+                        borderRadius: "16px",
                     },
-                    transition: "transform 0.1s ease-in-out, background-color 0.1s ease-in-out",
+                    transition: "all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    borderRadius: "12px",
                 }}
             >
                 <img
-                    src={`${import.meta.env.BASE_URL}/emotes/${emoji.source}/${emoji.id}`}
+                    src={`${cdn}/${emoji.image_id}_t.webp`}
                     alt={emoji.name}
                     loading="lazy"
                     style={{

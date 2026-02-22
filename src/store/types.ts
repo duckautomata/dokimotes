@@ -4,7 +4,7 @@ import { StateCreator } from "zustand";
 export enum EmojiType {
     ALL = "all",
     ANIMATED = "animated",
-    STILL = "still",
+    STATIC = "static",
 }
 
 export enum EmojiSource {
