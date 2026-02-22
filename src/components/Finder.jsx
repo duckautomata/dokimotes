@@ -74,7 +74,7 @@ const Finder = ({ emojis, emptyText }) => {
                         sx={{
                             borderRadius: "24px",
                             textTransform: "none",
-                            fontWeight: 600
+                            fontWeight: 600,
                         }}
                     >
                         Suggest New Emote
@@ -89,7 +89,7 @@ const Finder = ({ emojis, emptyText }) => {
                         sx={{
                             borderRadius: "24px",
                             textTransform: "none",
-                            fontWeight: 600
+                            fontWeight: 600,
                         }}
                     >
                         General Suggestion

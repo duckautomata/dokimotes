@@ -15,8 +15,8 @@ const EmojiNotFound = ({ emote_id }) => {
                 Dokimote Not Found
             </Typography>
             <Typography color="text.secondary" sx={{ maxWidth: 400, mb: 3 }}>
-                That emote with ID &#34;{emote_id}&#34; does not seem to exist. It might have
-                been removed or the link is incorrect.
+                That emote with ID &#34;{emote_id}&#34; does not seem to exist. It might have been removed or the link
+                is incorrect.
             </Typography>
             <Button component={Link} to="/" variant="contained" color="secondary">
                 Back to Gallery

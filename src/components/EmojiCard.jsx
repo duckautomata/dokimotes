@@ -38,7 +38,7 @@ const EmojiCard = ({ emoji }) => {
         emoji.credit,
         emoji.type,
         emoji.source,
-        emoji.tags.join(", ")
+        emoji.tags.join(", "),
     );
     const creditIsLink = emoji.credit.startsWith("https://");
     const isAnimated = emoji.type === "animated";
@@ -77,15 +77,11 @@ const EmojiCard = ({ emoji }) => {
                     borderRadius: 4,
                     width: "100%",
                     background: (theme) =>
-                        theme.palette.mode === "dark"
-                            ? "rgba(36, 36, 36, 0.45)"
-                            : "rgba(255, 255, 255, 0.45)",
+                        theme.palette.mode === "dark" ? "rgba(36, 36, 36, 0.45)" : "rgba(255, 255, 255, 0.45)",
                     backdropFilter: "blur(12px)",
                     border: "1px solid",
                     borderColor: (theme) =>
-                        theme.palette.mode === "dark"
-                            ? "rgba(255, 255, 255, 0.08)"
-                            : "rgba(0, 0, 0, 0.05)",
+                        theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
                 }}
             >
                 <CardMedia
@@ -202,8 +198,7 @@ const EmojiCard = ({ emoji }) => {
                     sx={{
                         backgroundColor: (theme) =>
                             theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.9)" : "rgba(36, 36, 36, 0.9)",
-                        color: (theme) =>
-                            theme.palette.mode === "dark" ? "#000000" : "#ffffff",
+                        color: (theme) => (theme.palette.mode === "dark" ? "#000000" : "#ffffff"),
                         fontWeight: 600,
                         backdropFilter: "blur(8px)",
                     }}

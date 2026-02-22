@@ -27,15 +27,11 @@ const EmojiFilter = ({ artists }) => {
                 mb: 4,
                 borderRadius: 4,
                 background: (theme) =>
-                    theme.palette.mode === "dark"
-                        ? "rgba(36, 36, 36, 0.45)"
-                        : "rgba(255, 255, 255, 0.45)",
+                    theme.palette.mode === "dark" ? "rgba(36, 36, 36, 0.45)" : "rgba(255, 255, 255, 0.45)",
                 backdropFilter: "blur(12px)",
                 border: "1px solid",
                 borderColor: (theme) =>
-                    theme.palette.mode === "dark"
-                        ? "rgba(255, 255, 255, 0.08)"
-                        : "rgba(0, 0, 0, 0.05)",
+                    theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
                 boxShadow: "0 8px 32px rgba(0,0,0,0.05)",
             }}
         >

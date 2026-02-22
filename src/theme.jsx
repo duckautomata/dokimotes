@@ -10,7 +10,7 @@ const commonOptions = {
         },
         h4: {
             fontWeight: 700,
-        }
+        },
     },
     shape: {
         borderRadius: 16,
@@ -38,9 +38,9 @@ const commonOptions = {
             styleOverrides: {
                 root: {
                     borderRadius: "24px",
-                }
-            }
-        }
+                },
+            },
+        },
     },
 };
 
