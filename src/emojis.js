@@ -1,6 +1,7 @@
 import { cdn } from "./config";
 // eslint-disable-next-line no-unused-vars
 import { EmojiSource, EmojiType } from "./store/types";
+import Papa from "papaparse";
 
 /**
  * @typedef {object} Emoji
@@ -15,47 +16,35 @@ import { EmojiSource, EmojiType } from "./store/types";
  * @property {string[]} tags - An array of search tags.
  */
 
-const parseTSV = (text) => {
-    // Split the text into lines and remove any trailing empty lines
-    const lines = text.trim().split("\n");
+const parseCSV = (text) => {
+    const parsed = Papa.parse(text.trim(), {
+        header: true,
+        skipEmptyLines: true,
+    });
 
-    // Get the headers from the first line
-    const headers = lines
-        .shift()
-        .split("\t")
-        .map((header) => header.trim());
-
-    // Map over the remaining lines to create objects
-    const objects = lines.map((line) => {
-        const values = line.split("\t");
-
-        // Use reduce to build an object from headers and values
-        return headers.reduce((obj, header, index) => {
-            const value = values[index] === "" ? "Unknown" : values[index];
+    return parsed.data.map((row) => {
+        const obj = {};
+        for (const [header, val] of Object.entries(row)) {
+            const value = val === "" ? "Unknown" : val;
             if (header === "tags") {
                 obj[header] = value.split(",").map((tag) => tag.trim());
-            } else if (header === "Name") {
-                obj["name"] = value;
             } else {
                 obj[header] = value;
             }
-
-            return obj;
-        }, {});
+        }
+        return obj;
     });
-
-    return objects;
 };
 
 /**
- * Fetches and parses the emojis.tsv file.
+ * Fetches and parses the emotes.csv file.
  * @returns {Promise<Emoji[] | undefined>} An array of emoji objects, or undefined on error.
  */
 export const getEmojis = async () => {
     try {
-        const response = await fetch(`${cdn}/emotes.tsv`);
+        const response = await fetch(`${cdn}/emotes.csv`);
         const text = await response.text();
-        const parsedData = parseTSV(text);
+        const parsedData = parseCSV(text);
         return parsedData;
     } catch {
         return undefined;
