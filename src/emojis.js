@@ -1,5 +1,4 @@
 import { cdn } from "./config";
-// eslint-disable-next-line no-unused-vars
 import { EmojiSource, EmojiType } from "./store/types";
 import Papa from "papaparse";
 
