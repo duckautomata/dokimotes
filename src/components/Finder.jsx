@@ -46,23 +46,6 @@ const Finder = ({ emojis, emptyText }) => {
     return (
         <Grid container direction="column" minWidth={minWidth} sx={{ py: 3, height: "100vh" }}>
             <Grid size={{ xs: 12 }}>
-                <Typography
-                    variant="h3"
-                    component="h1"
-                    gutterBottom
-                    align="center"
-                    sx={{
-                        mb: 4,
-                        fontWeight: 800,
-                        background: (theme) => `linear-gradient(45deg, ${theme.palette.primary.main}, #54e8d6)`,
-                        backgroundClip: "text",
-                        textFillColor: "transparent",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                    }}
-                >
-                    Doki Emote Finder
-                </Typography>
                 <Box display="flex" justifyContent="center" gap={2} mb={4}>
                     <Button
                         variant="outlined"
