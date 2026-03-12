@@ -1,0 +1,11 @@
+name = "dokimotes-app"
+compatibility_date = "2026-03-12"
+main = "./src/worker.js"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+[[routes]]
+pattern = "www.duck-automata.com/dokimotes/*"
+zone_name = "duck-automata.com"
