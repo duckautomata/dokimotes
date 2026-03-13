@@ -15,8 +15,8 @@ export default {
                 return response;
             }
 
-            // It's a navigation route (no extension). Fallback to the SPA's index.html.
-            url.pathname = "/dokimotes/index.html";
+            // It's a navigation route (no extension). Fallback to the SPA's root.
+            url.pathname = "/dokimotes/";
             return env.ASSETS.fetch(new Request(url, request));
         }
 
