@@ -1,5 +1,12 @@
 export default {
     async fetch(request, env) {
+        // 0. Redirect /dokimotes (no trailing slash) to /dokimotes/
+        const url = new URL(request.url);
+        if (url.pathname === "/dokimotes") {
+            url.pathname = "/dokimotes/";
+            return Response.redirect(url.toString(), 301);
+        }
+
         // 1. Attempt to fetch the requested asset
         const response = await env.ASSETS.fetch(request);
 
