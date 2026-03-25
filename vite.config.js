@@ -8,6 +8,11 @@ export default defineConfig(() => {
     const buildTime = new Date().getTime();
 
     return {
+        test: {
+            environment: "jsdom",
+            globals: true,
+            setupFiles: "./src/setupTests.js",
+        },
         plugins: [
             react(),
             {
@@ -16,7 +21,8 @@ export default defineConfig(() => {
                     const outDir = options.dir || "dokimotes";
                     const versionFilePath = path.resolve(outDir, "version.json");
                     fs.writeFileSync(versionFilePath, JSON.stringify({ buildTime }));
-                    console.log(`\nGenerated version.json with buildTime: ${buildTime}`); // eslint-disable-line no-console
+                    // oxlint-disable-next-line no-console
+                    console.log(`\nGenerated version.json with buildTime: ${buildTime}`);
                 },
             },
         ],
