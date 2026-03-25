@@ -13,7 +13,7 @@
         "lint:fix": "oxlint --fix .",
         "test": "vitest",
         "test:ci": "vitest run --reporter=junit --outputFile=junit.xml",
-        "deploy": "wrangler deploy",
+        "deploy": "npm run build && wrangler deploy",
         "deploy:local": "npm run format && npm run lint && npm run test -- --run && npm run build && wrangler deploy --dry-run"
     },
     "dependencies": {
