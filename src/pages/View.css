@@ -1,0 +1,298 @@
+.view-container {
+    animation: fadeIn 0.6s ease-out;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    /* Center the whole container contents */
+}
+
+.view-not-found {
+    text-align: center;
+    padding: 4rem;
+    color: var(--text-secondary);
+}
+
+.back-link {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    transition: color 0.2s ease;
+    align-self: flex-start;
+    width: auto;
+    margin-bottom: 1rem;
+}
+
+.back-link:hover {
+    color: var(--text-primary);
+}
+
+.back-arrow {
+    transition: transform 0.2s ease;
+}
+
+.back-link:hover .back-arrow {
+    transform: translateX(-4px);
+}
+
+.view-emote-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    max-width: 800px;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+}
+
+.emote-image-container {
+    position: relative;
+    max-width: 512px;
+    margin-bottom: 2rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    background-image:
+        linear-gradient(
+            45deg,
+            var(--checkerboard) 25%,
+            transparent 25%,
+            transparent 75%,
+            var(--checkerboard) 75%,
+            var(--checkerboard)
+        ),
+        linear-gradient(
+            45deg,
+            var(--checkerboard) 25%,
+            transparent 25%,
+            transparent 75%,
+            var(--checkerboard) 75%,
+            var(--checkerboard)
+        );
+    background-size: 20px 20px;
+    background-position:
+        0 0,
+        10px 10px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.centered-emote-image {
+    min-width: 340px;
+    min-height: 340px;
+    max-width: 512px;
+    max-height: 512px;
+    object-fit: contain;
+    display: block;
+}
+
+@media (max-width: 600px) {
+    .emote-image-container {
+        max-width: 340px;
+    }
+    .centered-emote-image {
+        max-width: 340px;
+        max-height: 340px;
+    }
+    .back-link {
+        display: inline-flex;
+        align-self: center;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+.emote-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: var(--hero-title-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+}
+
+.hero-artist {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.hero-artist span {
+    color: var(--accent-hover);
+    font-weight: 600;
+}
+
+.hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--panel-border);
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.meta-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.meta-value {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    word-break: break-word;
+}
+
+.hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.tag-pill {
+    padding: 0.4rem 1rem;
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+    border-radius: 99px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.emote-action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    width: 100%;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.primary-btn,
+.secondary-btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.primary-btn {
+    background: var(--accent);
+    color: white;
+}
+
+.primary-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.view-actions {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+.edit-doki-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.external-link-icon-view {
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.edit-doki-btn:hover .external-link-icon-view {
+    opacity: 1;
+}
+
+.edit-doki-btn:hover {
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--accent-hover);
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+.modal-error-popup {
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(220, 38, 38, 0.9);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1020;
+    animation: slideDown 0.3s ease-out;
+    pointer-events: none;
+    text-align: center;
+    max-width: 90%;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -1rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}

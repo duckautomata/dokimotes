@@ -1,0 +1,215 @@
+import { useParams, Link } from "react-router-dom";
+import { useState } from "react";
+import { renderTextWithLinks } from "../utils/textUtils";
+import { edit_emote_form, cdn } from "../config";
+import "./View.css";
+import { LOG_ERROR } from "../utils/debug";
+
+/**
+ * @typedef {import("../store/types").EmoteData} EmoteData
+ */
+
+const ExternalLinkIcon = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="external-link-icon-view"
+    >
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <line x1="10" y1="14" x2="21" y2="3"></line>
+    </svg>
+);
+
+/**
+ * @param {Object} props
+ * @param {EmoteData[]} props.data
+ */
+export default function View({ data }) {
+    const { emote_id } = useParams();
+    const emote = data.find((e) => e.emote_id === emote_id);
+    const [copiedLink, setCopiedLink] = useState(false);
+    const [copiedImage, setCopiedImage] = useState(false);
+    const [errorMsg, setErrorMsg] = useState("");
+
+    if (!emote)
+        return (
+            <div className="view-not-found">
+                <h2>Emote not found</h2>
+                <Link to="/" className="back-link">
+                    Return Home
+                </Link>
+            </div>
+        );
+
+    const imageUrl = `${cdn}/${emote.image_id}_p.webp`;
+    const imageUrlOrig = `${cdn}/${emote.image_id}${emote.image_ext}`;
+    const editUrl = edit_emote_form(
+        emote.emote_id,
+        emote.name,
+        emote.artist,
+        emote.credit,
+        emote.type,
+        emote.source,
+        emote.tags ? emote.tags.join(", ") : "",
+    );
+
+    const handleCopyImage = async () => {
+        try {
+            if (!navigator.clipboard || !window.ClipboardItem) {
+                setErrorMsg("Copying images is not supported in your browser.");
+                setTimeout(() => setErrorMsg(""), 3000);
+                return;
+            }
+
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+
+            let clipboardBlob = blob;
+
+            // The Clipboard API mainly supports image/png.
+            // Convert non-PNG images to PNG using a canvas.
+            if (blob.type !== "image/png") {
+                clipboardBlob = await new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        URL.revokeObjectURL(img.src);
+                        const canvas = document.createElement("canvas");
+                        canvas.width = img.naturalWidth;
+                        canvas.height = img.naturalHeight;
+                        const ctx = canvas.getContext("2d");
+                        ctx.drawImage(img, 0, 0);
+                        canvas.toBlob((b) => {
+                            if (b) {
+                                resolve(b);
+                            } else {
+                                reject(new Error("Canvas toBlob failed"));
+                            }
+                        }, "image/png");
+                    };
+                    img.onerror = () => {
+                        URL.revokeObjectURL(img.src);
+                        reject(new Error("Image failed to load for conversion"));
+                    };
+                    img.src = URL.createObjectURL(blob);
+                });
+            }
+
+            const item = new ClipboardItem({ [clipboardBlob.type]: clipboardBlob });
+            await navigator.clipboard.write([item]);
+            setCopiedImage(true);
+            setTimeout(() => setCopiedImage(false), 2000);
+        } catch (err) {
+            LOG_ERROR("Failed to copy image:", err);
+            setErrorMsg(
+                "Failed to copy image. Your browser might block cross-origin copying, or the image format might not be supported.",
+            );
+            setTimeout(() => setErrorMsg(""), 3000);
+        }
+    };
+
+    const handleCopyLink = async () => {
+        try {
+            await navigator.clipboard.writeText(imageUrl);
+            setCopiedLink(true);
+            setTimeout(() => setCopiedLink(false), 2000);
+        } catch (err) {
+            LOG_ERROR("Failed to copy link:", err);
+        }
+    };
+
+    const handleDownload = () => {
+        const link = document.createElement("a");
+        const fileName = `${emote.name}${emote.image_ext}`;
+        link.href = `${imageUrlOrig}?download=true&name=${encodeURIComponent(fileName)}`;
+        link.download = fileName;
+        link.click();
+    };
+
+    return (
+        <div className="view-container">
+            {errorMsg && <div className="modal-error-popup">{errorMsg}</div>}
+            <div className="view-emote-card glass-panel">
+                <div className="emote-image-container">
+                    <img src={imageUrl} alt={emote.name} className="centered-emote-image" />
+                    {emote.image_ext === ".mp4" && <div className="video-indicator"></div>}
+                </div>
+
+                <div className="emote-details">
+                    <Link to="/" className="back-link">
+                        <span className="back-arrow">←</span> Back to Gallery
+                    </Link>
+                    <h1 className="hero-title">{emote.name}</h1>
+                    {emote.artist && (
+                        <p className="hero-artist">
+                            Created by <span>{renderTextWithLinks(emote.artist)}</span>
+                        </p>
+                    )}
+
+                    <div className="hero-meta">
+                        {emote.credit && (
+                            <div className="meta-item">
+                                <span className="meta-label">Credit</span>
+                                <span className="meta-value">{renderTextWithLinks(emote.credit)}</span>
+                            </div>
+                        )}
+                        {emote.type && (
+                            <div className="meta-item">
+                                <span className="meta-label">Type</span>
+                                <span className="meta-value">
+                                    {emote.type.charAt(0).toUpperCase() + emote.type.slice(1)}
+                                </span>
+                            </div>
+                        )}
+                        {emote.source && (
+                            <div className="meta-item">
+                                <span className="meta-label">Source</span>
+                                <span className="meta-value">
+                                    {emote.source.charAt(0).toUpperCase() + emote.source.slice(1)}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+
+                    {emote.tags && emote.tags.length > 0 && (
+                        <div className="hero-tags">
+                            {emote.tags.map((tag) => (
+                                <span key={tag} className="tag-pill">
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <div className="emote-action-buttons">
+                    {emote.type !== "animated" && (
+                        <button className="primary-btn" onClick={handleCopyImage}>
+                            {copiedImage ? "Copied!" : "Copy Image"}
+                        </button>
+                    )}
+                    <button className="secondary-btn" onClick={handleCopyLink}>
+                        {copiedLink ? "Copied!" : "Copy Link"}
+                    </button>
+                    <button className="secondary-btn" onClick={handleDownload}>
+                        Download Image
+                    </button>
+                </div>
+            </div>
+
+            <div className="view-actions">
+                <a href={editUrl} target="_blank" rel="noopener noreferrer" className="edit-doki-btn">
+                    <span>✎ Suggest Edit</span>
+                    <ExternalLinkIcon />
+                </a>
+            </div>
+        </div>
+    );
+}

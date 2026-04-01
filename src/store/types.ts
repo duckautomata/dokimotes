@@ -1,7 +1,8 @@
 import { StateCreator } from "zustand";
 
 // Data Structure Interfaces
-export enum EmojiType {
+
+export enum EmoteType {
     ALL = "all",
     ANIMATED = "animated",
     STATIC = "static",
@@ -13,19 +14,29 @@ export enum EmojiSource {
     FANMADE = "fan-made",
 }
 
+export interface EmoteData {
+    emote_id: string;
+    image_id: string;
+    image_ext: string;
+    name: string;
+    artist: string;
+    credit: string;
+    type: EmoteType;
+    source: EmojiSource;
+    tags: string[];
+}
+
 // Slice Interfaces
 
 export interface FilterSlice {
-    searchText: string;
-    setSearchText: (text: string) => void;
-    emojiType: EmojiType;
-    setEmojiType: (t: EmojiType) => void;
-    emojiSource: EmojiSource;
-    setEmojiSource: (s: EmojiSource) => void;
-    artistFilter: string;
-    setArtistFilter: (artist: string) => void;
-    scrollIndex: number;
-    setScrollIndex: (i: number) => void;
+    homeSearchText: string;
+    homeSetSearchText: (text: string) => void;
+    homeFilterSource: string;
+    homeSetFilterSource: (source: string) => void;
+    homeFilterType: string;
+    homeSetFilterType: (type: string) => void;
+    homeFilterArtist: string;
+    homeSetFilterArtist: (artist: string) => void;
 }
 
 export interface SettingsSlice {

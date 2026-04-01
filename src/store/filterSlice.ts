@@ -1,14 +1,12 @@
-import { FilterSlice, AppSliceCreator, EmojiType, EmojiSource } from "./types";
+import { FilterSlice, AppSliceCreator } from "./types";
 
 export const createFilterSlice: AppSliceCreator<FilterSlice> = (set) => ({
-    searchText: "",
-    setSearchText: (text) => set({ searchText: text }),
-    emojiType: EmojiType.ALL,
-    setEmojiType: (t) => set({ emojiType: t }),
-    emojiSource: EmojiSource.ALL,
-    setEmojiSource: (s) => set({ emojiSource: s }),
-    artistFilter: "",
-    setArtistFilter: (artist) => set({ artistFilter: artist }),
-    scrollIndex: 0,
-    setScrollIndex: (i) => set({ scrollIndex: i }),
+    homeSearchText: "",
+    homeSetSearchText: (text) => set({ homeSearchText: text }),
+    homeFilterSource: "All",
+    homeSetFilterSource: (source) => set({ homeFilterSource: source }),
+    homeFilterType: "All",
+    homeSetFilterType: (type) => set({ homeFilterType: type }),
+    homeFilterArtist: "All",
+    homeSetFilterArtist: (artist) => set({ homeFilterArtist: artist }),
 });

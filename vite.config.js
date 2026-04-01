@@ -1,3 +1,4 @@
+// oxlint-disable no-console
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import fs from "fs";
@@ -8,11 +9,6 @@ export default defineConfig(() => {
     const buildTime = new Date().getTime();
 
     return {
-        test: {
-            environment: "jsdom",
-            globals: true,
-            setupFiles: "./src/setupTests.js",
-        },
         plugins: [
             react(),
             {
@@ -21,7 +17,6 @@ export default defineConfig(() => {
                     const outDir = options.dir || "dokimotes";
                     const versionFilePath = path.resolve(outDir, "version.json");
                     fs.writeFileSync(versionFilePath, JSON.stringify({ buildTime }));
-                    // oxlint-disable-next-line no-console
                     console.log(`\nGenerated version.json with buildTime: ${buildTime}`);
                 },
             },
@@ -48,6 +43,11 @@ export default defineConfig(() => {
                     },
                 },
             },
+        },
+        test: {
+            globals: true,
+            environment: "jsdom",
+            setupFiles: ["./src/setupTests.js"],
         },
     };
 });

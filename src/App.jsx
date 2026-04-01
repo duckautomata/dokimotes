@@ -1,68 +1,107 @@
-import "./App.css";
-import { ThemeProvider } from "@emotion/react";
-import { darkTheme, lightTheme } from "./theme";
-import { useEffect, useState } from "react";
-import { CssBaseline, useMediaQuery } from "@mui/material";
-import { getEmojis } from "./emojis";
-import Finder from "./components/Finder";
-import { Route, Routes } from "react-router-dom";
-import Viewer from "./components/Viewer";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { Routes, Route, Link, NavLink, useLocation } from "react-router-dom";
+import { loadEmoteData } from "./utils/dataLoader";
 import { useAppStore } from "./store/store";
+import Home from "./pages/Home";
+import View from "./pages/View";
 import UpdateAlert from "./components/UpdateAlert";
+import ScrollToTop from "./components/ScrollToTop";
+import SuggestionsDropdown from "./components/SuggestionsDropdown";
+import "./App.css";
 
-const App = () => {
+export default function App() {
+    const location = useLocation();
+
+    useLayoutEffect(() => {
+        document.documentElement.style.scrollBehavior = "auto";
+
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "instant",
+        });
+
+        setTimeout(() => {
+            document.documentElement.style.scrollBehavior = "";
+        }, 20);
+    }, [location.pathname]);
+
+    const [data, setData] = useState([]);
     const theme = useAppStore((state) => state.theme);
-    const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-    let colorTheme = prefersDarkMode ? darkTheme : lightTheme;
-    if (theme === "light") {
-        colorTheme = lightTheme;
-    } else if (theme === "dark") {
-        colorTheme = darkTheme;
-    }
-
-    const [emojis, setEmojis] = useState([]);
-    const [status, setStatus] = useState("loading");
-    const emptyText =
-        status === "loading"
-            ? "Loading"
-            : status === "error"
-              ? "Error loading emoji's"
-              : "No emoji's found matching your criteria.";
-
-    const shuffleArray = (array) => {
-        // Loop from the last element to the second element
-        for (let i = array.length - 1; i > 0; i--) {
-            // Pick a random index from 0 to i (inclusive)
-            const j = Math.floor(Math.random() * (i + 1));
-
-            // Swap the elements at indices i and j
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    };
 
     useEffect(() => {
-        getEmojis().then((data) => {
-            if (data === undefined) {
-                setStatus("error");
-                return;
-            } else {
-                setEmojis(shuffleArray(data));
-                setStatus("ok");
-            }
-        });
+        loadEmoteData().then(setData);
     }, []);
 
-    return (
-        <ThemeProvider theme={colorTheme}>
-            <CssBaseline />
-            <UpdateAlert />
-            <Routes>
-                <Route path="/view/:emote_id" element={<Viewer emojis={emojis} status={status} />} />
-                <Route path="*" element={<Finder emojis={emojis} emptyText={emptyText} />} />
-            </Routes>
-        </ThemeProvider>
-    );
-};
+    // Apply theme to document
+    useEffect(() => {
+        const applyTheme = (currentTheme) => {
+            if (currentTheme === "system") {
+                const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+                document.documentElement.setAttribute("data-theme", systemPrefersDark ? "dark" : "light");
+            } else {
+                document.documentElement.setAttribute("data-theme", currentTheme);
+            }
+        };
 
-export default App;
+        applyTheme(theme);
+
+        // Listen for system theme changes if set to system
+        if (theme === "system") {
+            const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+            const handleChange = () => applyTheme("system");
+
+            // Modern API
+            if (mediaQuery.addEventListener) {
+                mediaQuery.addEventListener("change", handleChange);
+                return () => mediaQuery.removeEventListener("change", handleChange);
+            } else if (mediaQuery.addListener) {
+                // Older API fallback
+                mediaQuery.addListener(handleChange);
+                return () => mediaQuery.removeListener(handleChange);
+            }
+        }
+    }, [theme]);
+
+    if (!data.length)
+        return (
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100vh",
+                    fontSize: "1.2rem",
+                    color: "var(--text-secondary)",
+                }}
+            >
+                Loading Dokimotes...
+            </div>
+        );
+
+    return (
+        <>
+            <UpdateAlert />
+            <header className="top-nav">
+                <Link to="/" className="nav-brand">
+                    Dokimotes
+                </Link>
+                <nav className="nav-links">
+                    <div className="nav-main-links">
+                        <NavLink to="/" className="nav-link nav-home">
+                            Home
+                        </NavLink>
+                        <SuggestionsDropdown />
+                    </div>
+                    <ScrollToTop />
+                </nav>
+            </header>
+            <main className="content">
+                <Routes>
+                    <Route path="/" element={<Home data={data} />} />
+                    <Route path="/view/:emote_id" element={<View data={data} />} />
+                </Routes>
+            </main>
+        </>
+    );
+}

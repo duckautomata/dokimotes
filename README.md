@@ -1,12 +1,8 @@
 # dokimotes
 
-A website to search for and use Dokibird's emotes.
+An archive of Dokibird's emotes to search through and use.
 
 ## Overview
-
-_System_
-
-- **[Guide](#guide)**
 
 _Development_
 
@@ -17,14 +13,6 @@ _Development_
 - **[Building a Release](#building-a-new-release)**
 - **[Release Process](#release-process)**
 
-## System
-
-### Guide
-
-The site has two pages: search and view.
-Search is the landing page where you can search for what emote you want.
-When you click on an emote, it will take you to the view page. Here, you can copy the image to clipboard, copy the direct link, or go back to the search page.
-
 ## Development
 
 ### Tech Used
@@ -32,7 +20,6 @@ When you click on an emote, it will take you to the view page. Here, you can cop
 - Node 22
 - Vite to run locally
 - React19
-- MUI 7
 
 ### Running Locally
 
@@ -49,7 +36,7 @@ Every time you save, Vite will automatically refresh the cache and the site shou
 2. Run `npm run test`, `npm run format`, `npm run lint` and make sure everything is all good.
 3. Push, raise pr, I'll approve.
 
-### Contrubiting ideas
+### Contributing ideas
 
 Raise an issue and detail what idea you have or would like to see.
 
