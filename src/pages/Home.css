@@ -46,6 +46,13 @@
     width: 100%;
 }
 
+@media (max-width: 600px) {
+    .home-controls {
+        gap: 0.75rem;
+        flex-direction: column;
+    }
+}
+
 .home-search-container {
     flex: 1 1 300px;
     position: relative;
@@ -73,19 +80,28 @@
 }
 
 .home-filter-container {
-    flex: 0 0 auto;
+    flex: 0 1 auto;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1rem;
+    gap: 0.75rem;
     position: relative;
     z-index: 10;
+    width: 100%;
+}
+
+@media (max-width: 480px) {
+    .home-filter-container {
+        gap: 0.5rem;
+        justify-content: space-evenly;
+    }
 }
 
 .filter-group {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
+    white-space: nowrap;
 }
 
 .filter-label {
@@ -95,20 +111,20 @@
 }
 
 .home-filter-select {
-    padding: 0.75rem 1.5rem;
+    padding: 0.6rem 1.75rem 0.6rem 0.75rem;
     border-radius: 99px;
     border: 1px solid rgba(59, 130, 246, 0.3);
     background: rgba(0, 0, 0, 0.2);
     color: var(--text-primary);
-    font-size: 1rem;
+    font-size: 0.9rem;
     outline: none;
     transition: all 0.3s ease;
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2360a5fa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 1em;
+    background-position: right 0.75rem center;
+    background-size: 0.8em;
     box-sizing: border-box;
 }
 
@@ -121,6 +137,31 @@
 .home-filter-select option {
     background: var(--bg-color);
     color: var(--text-primary);
+}
+
+.home-filter-reset {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #60a5fa;
+    padding: 0.6rem 1.25rem;
+    border-radius: 99px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    align-self: center;
+}
+
+.home-filter-reset:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.home-filter-reset:active {
+    transform: translateY(0);
 }
 
 .doki-grid {
@@ -224,12 +265,45 @@
 }
 
 @media (max-width: 600px) {
+    .home-header {
+        margin-bottom: 2rem;
+    }
+
+    .home-search-container {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
     .doki-grid {
         grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
+        gap: 0.75rem;
     }
 
     .doki-card-content {
-        padding: 1rem;
+        padding: 0.75rem;
+    }
+
+    .home-filter-select {
+        padding: 0.5rem 1.5rem 0.5rem 0.75rem;
+        font-size: 0.85rem;
+        background-position: right 0.5rem center;
+    }
+
+    .filter-label {
+        font-size: 0.8rem;
+    }
+
+    .home-filter-reset {
+        width: 100%;
+        margin-top: 0.5rem;
+        padding: 0.75rem;
+        font-size: 0.85rem;
+        background: rgba(59, 130, 246, 0.15);
+    }
+}
+
+@media (max-width: 400px) {
+    .doki-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }

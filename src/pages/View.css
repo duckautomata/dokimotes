@@ -53,6 +53,22 @@
     position: relative;
     max-width: 512px;
     margin-bottom: 2rem;
+    border-radius: 12px;
+    overflow: hidden;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 340px;
+    min-width: 340px;
+}
+
+.centered-emote-image {
+    width: 100%;
+    height: auto;
+    max-width: 512px;
+    max-height: 512px;
+    object-fit: contain;
+    display: block;
     background-color: rgba(0, 0, 0, 0.2);
     background-image:
         linear-gradient(
@@ -76,19 +92,6 @@
         0 0,
         10px 10px;
     border-radius: 12px;
-    overflow: hidden;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.centered-emote-image {
-    min-width: 340px;
-    min-height: 340px;
-    max-width: 512px;
-    max-height: 512px;
-    object-fit: contain;
-    display: block;
 }
 
 @media (max-width: 600px) {

@@ -57,6 +57,8 @@ export default function Home({ data }) {
         );
     });
 
+    const isFiltered = filterSource !== "All" || filterType !== "All" || filterArtist !== "All";
+
     return (
         <div className="home-container">
             <header className="home-header">
@@ -144,6 +146,18 @@ export default function Home({ data }) {
                                 ))}
                             </select>
                         </div>
+                        {isFiltered && (
+                            <button
+                                className="home-filter-reset"
+                                onClick={() => {
+                                    setFilterSource("All");
+                                    setFilterType("All");
+                                    setFilterArtist("All");
+                                }}
+                            >
+                                Reset Filters
+                            </button>
+                        )}
                     </div>
                 </div>
             </header>
