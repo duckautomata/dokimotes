@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { renderTextWithLinks } from "../utils/textUtils";
 import { edit_emote_form, cdn } from "../config";
 import "./View.css";
@@ -38,6 +38,45 @@ export default function View({ data }) {
     const [copiedLink, setCopiedLink] = useState(false);
     const [copiedImage, setCopiedImage] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
+    const [fileSize, setFileSize] = useState(null);
+    const [dimensions, setDimensions] = useState(null);
+
+    useEffect(() => {
+        if (!emote) return;
+
+        const urlOrig = `${cdn}/${emote.image_id}${emote.image_ext}`;
+        let isMounted = true;
+        const fetchSize = async () => {
+            try {
+                const response = await fetch(urlOrig, { method: "HEAD" });
+                const contentLength = response.headers.get("content-length");
+                if (contentLength && isMounted) {
+                    const size = parseInt(contentLength, 10);
+                    if (size > 1024 * 1024) {
+                        setFileSize((size / (1024 * 1024)).toFixed(2) + " MB");
+                    } else if (size > 1024) {
+                        setFileSize((size / 1024).toFixed(2) + " KB");
+                    } else {
+                        setFileSize(size + " B");
+                    }
+                }
+            } catch (e) {
+                LOG_ERROR("Failed to fetch file size:", e);
+            }
+        };
+
+        fetchSize();
+
+        return () => {
+            isMounted = false;
+            setFileSize(null);
+            setDimensions(null);
+        };
+    }, [emote]);
+
+    const handleImageLoad = (e) => {
+        setDimensions(`${e.target.naturalWidth} × ${e.target.naturalHeight}`);
+    };
 
     if (!emote)
         return (
@@ -138,7 +177,7 @@ export default function View({ data }) {
             {errorMsg && <div className="modal-error-popup">{errorMsg}</div>}
             <div className="view-emote-card glass-panel">
                 <div className="emote-image-container">
-                    <img src={imageUrl} alt={emote.name} className="centered-emote-image" />
+                    <img src={imageUrl} alt={emote.name} className="centered-emote-image" onLoad={handleImageLoad} />
                     {emote.image_ext === ".mp4" && <div className="video-indicator"></div>}
                 </div>
 
@@ -174,6 +213,24 @@ export default function View({ data }) {
                                 <span className="meta-value">
                                     {emote.source.charAt(0).toUpperCase() + emote.source.slice(1)}
                                 </span>
+                            </div>
+                        )}
+                        {dimensions && (
+                            <div className="meta-item">
+                                <span className="meta-label">Dimensions</span>
+                                <span className="meta-value">{dimensions}</span>
+                            </div>
+                        )}
+                        {fileSize && (
+                            <div className="meta-item">
+                                <span className="meta-label">Size</span>
+                                <span className="meta-value">{fileSize}</span>
+                            </div>
+                        )}
+                        {emote.image_ext && (
+                            <div className="meta-item">
+                                <span className="meta-label">Original Format</span>
+                                <span className="meta-value">{emote.image_ext.replace(".", "").toUpperCase()}</span>
                             </div>
                         )}
                     </div>
