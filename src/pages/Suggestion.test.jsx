@@ -23,6 +23,10 @@ vi.mock("../components/TurnstileWidget", () => ({
     default: () => <div data-testid="turnstile" />,
 }));
 
+vi.mock("../components/UnsavedChangesGuard", () => ({
+    default: () => null,
+}));
+
 describe("Suggestion", () => {
     it("renders the form once config is loaded", async () => {
         render(

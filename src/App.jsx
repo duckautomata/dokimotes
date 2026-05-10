@@ -1,12 +1,7 @@
 import { useEffect, useLayoutEffect, useState } from "react";
-import { Routes, Route, Link, NavLink, useLocation } from "react-router-dom";
+import { Outlet, Link, NavLink, useLocation } from "react-router-dom";
 import { loadEmoteData } from "./utils/dataLoader";
 import { useAppStore } from "./store/store";
-import Home from "./pages/Home";
-import View from "./pages/View";
-import AddEmote from "./pages/AddEmote";
-import EditEmote from "./pages/EditEmote";
-import Suggestion from "./pages/Suggestion";
 import UpdateAlert from "./components/UpdateAlert";
 import EnvironmentBadge from "./components/EnvironmentBadge";
 import MockApiBadge from "./components/MockApiBadge";
@@ -108,13 +103,7 @@ export default function App() {
                 </nav>
             </header>
             <main className="content">
-                <Routes>
-                    <Route path="/" element={<Home data={data} />} />
-                    <Route path="/view/:emote_id" element={<View data={data} />} />
-                    <Route path="/add" element={<AddEmote />} />
-                    <Route path="/edit/:emote_id" element={<EditEmote data={data} />} />
-                    <Route path="/suggestion" element={<Suggestion />} />
-                </Routes>
+                <Outlet context={{ data }} />
             </main>
         </>
     );

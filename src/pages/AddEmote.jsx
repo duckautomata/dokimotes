@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import TurnstileWidget from "../components/TurnstileWidget";
 import ImageDropZone from "../components/ImageDropZone";
+import UnsavedChangesGuard from "../components/UnsavedChangesGuard";
 import { fetchPublicConfig, uploadImage, submitSuggestion, validateImageFile } from "../utils/contentApi";
 import { LOG_ERROR } from "../utils/debug";
 import "./SuggestionForms.css";
@@ -82,6 +83,15 @@ export default function AddEmote() {
         .filter(Boolean);
 
     const canSubmit = name.trim().length > 0 && !!uploadedImage && !!turnstileToken && !busy;
+    const isDirty =
+        !success &&
+        (name.trim().length > 0 ||
+            artist.trim().length > 0 ||
+            credit.trim().length > 0 ||
+            tagsText.trim().length > 0 ||
+            notes.trim().length > 0 ||
+            !!pickedFile ||
+            !!uploadedImage);
 
     const handleFileSelected = (file) => {
         setError(null);
@@ -185,6 +195,7 @@ export default function AddEmote() {
 
     return (
         <div className="suggestion-page">
+            <UnsavedChangesGuard when={isDirty} />
             <Link to="/" className="suggestion-back">
                 <span className="back-arrow">←</span> Back to Gallery
             </Link>

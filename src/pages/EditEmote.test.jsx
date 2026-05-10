@@ -23,6 +23,10 @@ vi.mock("../components/TurnstileWidget", () => ({
     default: () => <div data-testid="turnstile" />,
 }));
 
+vi.mock("../components/UnsavedChangesGuard", () => ({
+    default: () => null,
+}));
+
 const mockData = [
     {
         emote_id: "test-1",

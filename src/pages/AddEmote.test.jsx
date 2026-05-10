@@ -23,6 +23,10 @@ vi.mock("../components/TurnstileWidget", () => ({
     default: () => <div data-testid="turnstile" />,
 }));
 
+vi.mock("../components/UnsavedChangesGuard", () => ({
+    default: () => null,
+}));
+
 describe("AddEmote", () => {
     it("renders the form fields once config is loaded", async () => {
         render(

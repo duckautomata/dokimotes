@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import TurnstileWidget from "../components/TurnstileWidget";
 import ImageDropZone from "../components/ImageDropZone";
+import UnsavedChangesGuard from "../components/UnsavedChangesGuard";
 import { fetchPublicConfig, uploadImage, submitSuggestion, validateImageFile } from "../utils/contentApi";
 import { LOG_ERROR } from "../utils/debug";
 import { cdn } from "../config";
@@ -151,6 +152,12 @@ export default function EditEmote({ data }) {
         (editHasFieldChanges || editHasReplacementImage) && !!turnstileToken && !busy && name.trim().length > 0;
     const canSubmitDelete = reason.trim().length > 0 && !!turnstileToken && !busy;
 
+    const isDirty =
+        !success &&
+        (mode === "edit"
+            ? editHasFieldChanges || editHasReplacementImage || !!pickedFile || notes.trim().length > 0
+            : reason.trim().length > 0);
+
     const handleFileSelected = (file) => {
         setError(null);
         setSuccess(null);
@@ -299,6 +306,7 @@ export default function EditEmote({ data }) {
 
     return (
         <div className="suggestion-page">
+            <UnsavedChangesGuard when={isDirty} />
             <Link to={`/view/${emote.emote_id}`} className="suggestion-back">
                 <span className="back-arrow">←</span> Back to Emote
             </Link>

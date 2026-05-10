@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import TurnstileWidget from "../components/TurnstileWidget";
+import UnsavedChangesGuard from "../components/UnsavedChangesGuard";
 import { fetchPublicConfig, submitSuggestion } from "../utils/contentApi";
 import { LOG_ERROR } from "../utils/debug";
 import "./SuggestionForms.css";
@@ -29,6 +30,7 @@ export default function Suggestion() {
     }, []);
 
     const canSubmit = message.trim().length > 0 && !!turnstileToken && !busy;
+    const isDirty = !success && (subject.trim().length > 0 || message.trim().length > 0);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -100,6 +102,7 @@ export default function Suggestion() {
 
     return (
         <div className="suggestion-page">
+            <UnsavedChangesGuard when={isDirty} />
             <Link to="/" className="suggestion-back">
                 <span className="back-arrow">←</span> Back to Gallery
             </Link>
