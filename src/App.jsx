@@ -1,11 +1,10 @@
 import { useEffect, useLayoutEffect, useState } from "react";
-import { Routes, Route, Link, NavLink, useLocation } from "react-router-dom";
+import { Outlet, Link, NavLink, useLocation } from "react-router-dom";
 import { loadEmoteData } from "./utils/dataLoader";
 import { useAppStore } from "./store/store";
-import Home from "./pages/Home";
-import View from "./pages/View";
 import UpdateAlert from "./components/UpdateAlert";
 import EnvironmentBadge from "./components/EnvironmentBadge";
+import MockApiBadge from "./components/MockApiBadge";
 import ScrollToTop from "./components/ScrollToTop";
 import SuggestionsDropdown from "./components/SuggestionsDropdown";
 import "./App.css";
@@ -89,6 +88,7 @@ export default function App() {
                         Dokimotes
                     </Link>
                     <EnvironmentBadge />
+                    <MockApiBadge />
                 </div>
                 <nav className="nav-links">
                     <div className="nav-main-links">
@@ -96,16 +96,14 @@ export default function App() {
                             Home
                         </NavLink>
                         <EnvironmentBadge className="mobile-only" />
+                        <MockApiBadge className="mobile-only" />
                         <SuggestionsDropdown />
                     </div>
                     <ScrollToTop />
                 </nav>
             </header>
             <main className="content">
-                <Routes>
-                    <Route path="/" element={<Home data={data} />} />
-                    <Route path="/view/:emote_id" element={<View data={data} />} />
-                </Routes>
+                <Outlet context={{ data }} />
             </main>
         </>
     );
