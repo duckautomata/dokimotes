@@ -1,32 +1,13 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { renderTextWithLinks } from "../utils/textUtils";
-import { edit_emote_form, cdn } from "../config";
+import { cdn } from "../config";
 import "./View.css";
 import { LOG_ERROR } from "../utils/debug";
 
 /**
  * @typedef {import("../store/types").EmoteData} EmoteData
  */
-
-const ExternalLinkIcon = () => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="external-link-icon-view"
-    >
-        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-        <polyline points="15 3 21 3 21 9"></polyline>
-        <line x1="10" y1="14" x2="21" y2="3"></line>
-    </svg>
-);
 
 /**
  * @param {Object} props
@@ -90,15 +71,7 @@ export default function View({ data }) {
 
     const imageUrl = `${cdn}/${emote.image_id}_p.webp`;
     const imageUrlOrig = `${cdn}/${emote.image_id}${emote.image_ext}`;
-    const editUrl = edit_emote_form(
-        emote.emote_id,
-        emote.name,
-        emote.artist,
-        emote.credit,
-        emote.type,
-        emote.source,
-        emote.tags ? emote.tags.join(", ") : "",
-    );
+    const editUrl = `/edit/${emote.emote_id}`;
 
     const handleCopyImage = async () => {
         try {
@@ -262,10 +235,9 @@ export default function View({ data }) {
             </div>
 
             <div className="view-actions">
-                <a href={editUrl} target="_blank" rel="noopener noreferrer" className="edit-doki-btn">
+                <Link to={editUrl} className="edit-doki-btn">
                     <span>✎ Suggest Edit</span>
-                    <ExternalLinkIcon />
-                </a>
+                </Link>
             </div>
         </div>
     );
