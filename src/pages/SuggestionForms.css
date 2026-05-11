@@ -584,6 +584,28 @@
     cursor: not-allowed;
 }
 
+.route-error-stack {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin: 0 0 1.25rem 0;
+    font-family:
+        ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: #f87171;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 360px;
+    overflow: auto;
+}
+
+[data-theme="light"] .route-error-stack {
+    background: rgba(0, 0, 0, 0.05);
+    color: #dc2626;
+}
+
 .suggestion-submit-btn.danger {
     background: #dc2626;
 }

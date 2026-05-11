@@ -3,7 +3,8 @@ import { describe, it, expect } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import SuggestionsDropdown from "./SuggestionsDropdown";
 
-const renderWithRouter = (ui) => render(<MemoryRouter>{ui}</MemoryRouter>);
+const renderWithRouter = (ui, { route = "/" } = {}) =>
+    render(<MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>);
 
 describe("SuggestionsDropdown", () => {
     it("renders the button initially closed", () => {
@@ -52,5 +53,19 @@ describe("SuggestionsDropdown", () => {
         fireEvent.click(newEmoteLink);
 
         expect(screen.queryByText("New Emote")).not.toBeInTheDocument();
+    });
+
+    it("does not show 'Edit Current Emote' when off a view page", () => {
+        renderWithRouter(<SuggestionsDropdown />);
+        fireEvent.click(screen.getByRole("button", { name: /Suggestions/i }));
+        expect(screen.queryByText("Edit Current Emote")).not.toBeInTheDocument();
+    });
+
+    it("shows 'Edit Current Emote' on a view page and links to the matching edit route", () => {
+        renderWithRouter(<SuggestionsDropdown />, { route: "/view/abc123" });
+        fireEvent.click(screen.getByRole("button", { name: /Suggestions/i }));
+
+        const editLink = screen.getByText("Edit Current Emote").closest("a");
+        expect(editLink).toHaveAttribute("href", "/edit/abc123");
     });
 });

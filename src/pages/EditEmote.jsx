@@ -338,48 +338,6 @@ export default function EditEmote({ data }) {
                 </div>
 
                 <form className="suggestion-form" onSubmit={handleSubmit}>
-                    <div className="suggestion-image-section">
-                        <span className="suggestion-field-label">
-                            {mode === "edit" ? "Image" : "Current Image"}
-                            {mode === "edit" && (
-                                <span className="suggestion-field-hint">
-                                    {" "}
-                                    Replacement is optional · up to {maxMb} MB
-                                </span>
-                            )}
-                        </span>
-                        {mode === "edit" ? (
-                            <div className="suggestion-image-pair">
-                                <div className="suggestion-image-pair-item">
-                                    <span className="suggestion-image-caption">Current</span>
-                                    <div className="suggestion-image-display">
-                                        <img src={currentImageUrl} alt={`Current ${emote.name}`} />
-                                    </div>
-                                </div>
-                                <div className="suggestion-image-pair-item">
-                                    <span className="suggestion-image-caption">
-                                        {uploadedImage ? "Replacement" : "Drop replacement"}
-                                    </span>
-                                    <ImageDropZone
-                                        accept={acceptList}
-                                        onSelect={handleFileSelected}
-                                        previewSrc={previewSrc}
-                                        overlay={dropzoneOverlay}
-                                        onClear={handleClearImage}
-                                        clearable={!!uploadedImage}
-                                        placeholder="Drop image or click"
-                                        hint="Auto-uploads on drop"
-                                        disabled={busy === "submitting"}
-                                    />
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="suggestion-image-display compact">
-                                <img src={currentImageUrl} alt={`Current ${emote.name}`} />
-                            </div>
-                        )}
-                    </div>
-
                     {mode === "edit" ? (
                         <>
                             <div className="suggestion-field">
@@ -493,11 +451,6 @@ export default function EditEmote({ data }) {
                                 />
                             </div>
 
-                            {!editHasFieldChanges && !editHasReplacementImage && (
-                                <div className="suggestion-status info">
-                                    Make a change above (edit a field or drop a new image) to enable submission.
-                                </div>
-                            )}
                         </>
                     ) : (
                         <>
@@ -519,6 +472,54 @@ export default function EditEmote({ data }) {
                                 />
                             </div>
                         </>
+                    )}
+
+                    <div className="suggestion-image-section">
+                        <span className="suggestion-field-label">
+                            {mode === "edit" ? "Image" : "Current Image"}
+                            {mode === "edit" && (
+                                <span className="suggestion-field-hint">
+                                    {" "}
+                                    Replacement is optional · up to {maxMb} MB
+                                </span>
+                            )}
+                        </span>
+                        {mode === "edit" ? (
+                            <div className="suggestion-image-pair">
+                                <div className="suggestion-image-pair-item">
+                                    <span className="suggestion-image-caption">Current</span>
+                                    <div className="suggestion-image-display">
+                                        <img src={currentImageUrl} alt={`Current ${emote.name}`} />
+                                    </div>
+                                </div>
+                                <div className="suggestion-image-pair-item">
+                                    <span className="suggestion-image-caption">
+                                        {uploadedImage ? "Replacement" : "Drop replacement"}
+                                    </span>
+                                    <ImageDropZone
+                                        accept={acceptList}
+                                        onSelect={handleFileSelected}
+                                        previewSrc={previewSrc}
+                                        overlay={dropzoneOverlay}
+                                        onClear={handleClearImage}
+                                        clearable={!!uploadedImage}
+                                        placeholder="Drop image or click"
+                                        hint="Auto-uploads on drop"
+                                        disabled={busy === "submitting"}
+                                    />
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="suggestion-image-display compact">
+                                <img src={currentImageUrl} alt={`Current ${emote.name}`} />
+                            </div>
+                        )}
+                    </div>
+
+                    {mode === "edit" && !editHasFieldChanges && !editHasReplacementImage && (
+                        <div className="suggestion-status info">
+                            Make a change above (edit a field or drop a new image) to enable submission.
+                        </div>
                     )}
 
                     <div className="suggestion-turnstile-block">

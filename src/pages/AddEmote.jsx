@@ -206,26 +206,6 @@ export default function AddEmote() {
                 </p>
 
                 <form className="suggestion-form" onSubmit={handleSubmit}>
-                    <div className="suggestion-image-section suggestion-image-section-single">
-                        <span className="suggestion-field-label">
-                            Image <span className="suggestion-field-required">*</span>{" "}
-                            <span className="suggestion-field-hint">
-                                Up to {maxMb} MB · {(cfg.supported_formats ?? []).join(", ")}
-                            </span>
-                        </span>
-                        <ImageDropZone
-                            accept={acceptList}
-                            onSelect={handleFileSelected}
-                            previewSrc={previewSrc}
-                            overlay={dropzoneOverlay}
-                            onClear={handleClearImage}
-                            clearable={!!uploadedImage}
-                            placeholder="Drop image or click to browse"
-                            hint="Auto-uploads on drop"
-                            disabled={busy === "submitting"}
-                        />
-                    </div>
-
                     <div className="suggestion-field">
                         <label className="suggestion-field-label" htmlFor="add-name">
                             Name <span className="suggestion-field-required">*</span>
@@ -332,6 +312,26 @@ export default function AddEmote() {
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
                             maxLength={2000}
+                        />
+                    </div>
+
+                    <div className="suggestion-image-section suggestion-image-section-single">
+                        <span className="suggestion-field-label">
+                            Image <span className="suggestion-field-required">*</span>{" "}
+                            <span className="suggestion-field-hint">
+                                Up to {maxMb} MB · {(cfg.supported_formats ?? []).join(", ")}
+                            </span>
+                        </span>
+                        <ImageDropZone
+                            accept={acceptList}
+                            onSelect={handleFileSelected}
+                            previewSrc={previewSrc}
+                            overlay={dropzoneOverlay}
+                            onClear={handleClearImage}
+                            clearable={!!uploadedImage}
+                            placeholder="Drop image or click to browse"
+                            hint="Auto-uploads on drop"
+                            disabled={busy === "submitting"}
                         />
                     </div>
 

@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useMatch } from "react-router-dom";
 import "./SuggestionsDropdown.css";
 
 export default function SuggestionsDropdown() {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const viewMatch = useMatch("/view/:emote_id");
+    const currentEmoteId = viewMatch?.params?.emote_id;
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -36,6 +38,11 @@ export default function SuggestionsDropdown() {
                     <Link to="/add" onClick={close} className="dropdown-item">
                         <span>New Emote</span>
                     </Link>
+                    {currentEmoteId && (
+                        <Link to={`/edit/${currentEmoteId}`} onClick={close} className="dropdown-item">
+                            <span>Edit Current Emote</span>
+                        </Link>
+                    )}
                     <Link to="/suggestion" onClick={close} className="dropdown-item">
                         <span>General Suggestion</span>
                     </Link>
