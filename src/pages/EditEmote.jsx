@@ -450,7 +450,6 @@ export default function EditEmote({ data }) {
                                     maxLength={2000}
                                 />
                             </div>
-
                         </>
                     ) : (
                         <>
