@@ -5,7 +5,7 @@ import ImageDropZone from "../components/ImageDropZone";
 import UnsavedChangesGuard from "../components/UnsavedChangesGuard";
 import { fetchPublicConfig, uploadImage, submitSuggestion, validateImageFile } from "../utils/contentApi";
 import { LOG_ERROR } from "../utils/debug";
-import { cdn } from "../config";
+import { cdn, turnstileEnabled } from "../config";
 import "./SuggestionForms.css";
 
 /**
@@ -51,7 +51,7 @@ export default function EditEmote({ data }) {
     const [localPreviewUrl, setLocalPreviewUrl] = useState(null);
     const [uploadedImage, setUploadedImage] = useState(null);
 
-    const [turnstileToken, setTurnstileToken] = useState(null);
+    const [turnstileToken, setTurnstileToken] = useState(turnstileEnabled ? null : "");
     const turnstileResetRef = useRef(null);
     const isUploadingRef = useRef(false);
 
@@ -89,7 +89,7 @@ export default function EditEmote({ data }) {
     }, [pickedFile]);
 
     useEffect(() => {
-        if (!pickedFile || !turnstileToken || uploadedImage || busy) return;
+        if (!pickedFile || turnstileToken === null || uploadedImage || busy) return;
         if (isUploadingRef.current) return;
         isUploadingRef.current = true;
 
@@ -149,8 +149,8 @@ export default function EditEmote({ data }) {
     const editHasFieldChanges = Object.keys(editChanges).length > 0;
     const editHasReplacementImage = !!uploadedImage;
     const canSubmitEdit =
-        (editHasFieldChanges || editHasReplacementImage) && !!turnstileToken && !busy && name.trim().length > 0;
-    const canSubmitDelete = reason.trim().length > 0 && !!turnstileToken && !busy;
+        (editHasFieldChanges || editHasReplacementImage) && turnstileToken !== null && !busy && name.trim().length > 0;
+    const canSubmitDelete = reason.trim().length > 0 && turnstileToken !== null && !busy;
 
     const isDirty =
         !success &&
@@ -302,7 +302,7 @@ export default function EditEmote({ data }) {
     const previewSrc = uploadedImage ? uploadedImage.urls.preview : localPreviewUrl;
     let dropzoneOverlay = null;
     if (busy === "uploading") dropzoneOverlay = "Uploading…";
-    else if (pickedFile && !turnstileToken) dropzoneOverlay = "Waiting for verification…";
+    else if (pickedFile && turnstileToken === null) dropzoneOverlay = "Waiting for verification…";
 
     return (
         <div className="suggestion-page">
@@ -521,14 +521,16 @@ export default function EditEmote({ data }) {
                         </div>
                     )}
 
-                    <div className="suggestion-turnstile-block">
-                        <span className="suggestion-field-hint">Human verification:</span>
-                        <TurnstileWidget
-                            siteKey={cfg.turnstile_site_key}
-                            onToken={setTurnstileToken}
-                            resetRef={turnstileResetRef}
-                        />
-                    </div>
+                    {turnstileEnabled && (
+                        <div className="suggestion-turnstile-block">
+                            <span className="suggestion-field-hint">Human verification:</span>
+                            <TurnstileWidget
+                                siteKey={cfg.turnstile_site_key}
+                                onToken={setTurnstileToken}
+                                resetRef={turnstileResetRef}
+                            />
+                        </div>
+                    )}
 
                     {error && <div className="suggestion-status error">{error}</div>}
 

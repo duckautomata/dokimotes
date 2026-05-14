@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { isMockMode } from "../config";
+import { isMockMode, turnstileEnabled } from "../config";
 import { LOG_ERROR } from "../utils/debug";
 
 const SCRIPT_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js";
@@ -47,6 +47,27 @@ const loadTurnstileScript = () => {
 };
 
 const generateMockToken = () => `${MOCK_TOKEN_PREFIX}${Math.random().toString(36).slice(2, 10)}`;
+
+function DisabledTurnstileWidget({ onToken, resetRef }) {
+    const onTokenRef = useRef(onToken);
+
+    useEffect(() => {
+        onTokenRef.current = onToken;
+    }, [onToken]);
+
+    useEffect(() => {
+        const issue = () => onTokenRef.current?.("");
+        issue();
+        if (resetRef) {
+            resetRef.current = () => issue();
+        }
+        return () => {
+            if (resetRef) resetRef.current = null;
+        };
+    }, [resetRef]);
+
+    return null;
+}
 
 function MockTurnstileWidget({ onToken, resetRef }) {
     const onTokenRef = useRef(onToken);
@@ -133,13 +154,16 @@ function RealTurnstileWidget({ siteKey, onToken, resetRef }) {
 /**
  * Cloudflare Turnstile widget. Each token is single-use — call resetRef.current()
  * after consuming a token to issue a fresh challenge. In mock mode (VITE_MOCK_API),
- * renders a placeholder and auto-issues fake tokens.
+ * renders a placeholder and auto-issues fake tokens. When `turnstileEnabled` is
+ * `false` in config, the widget is bypassed entirely and emits an empty string
+ * token (`""`) so the payload still carries the field but with no value.
  *
  * @param {Object} props
- * @param {string} props.siteKey - Site key from /api/public/config (ignored in mock mode).
+ * @param {string} props.siteKey - Site key from /api/public/config (ignored in mock / disabled mode).
  * @param {(token: string | null) => void} props.onToken - Called with the token on success, null on expire/error/reset.
  * @param {{ current: (() => void) | null }} [props.resetRef] - Mutable ref; populated with a reset() function.
  */
 export default function TurnstileWidget(props) {
+    if (!turnstileEnabled) return <DisabledTurnstileWidget {...props} />;
     return isMockMode ? <MockTurnstileWidget {...props} /> : <RealTurnstileWidget {...props} />;
 }

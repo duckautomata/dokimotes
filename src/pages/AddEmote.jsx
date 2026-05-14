@@ -5,6 +5,7 @@ import ImageDropZone from "../components/ImageDropZone";
 import UnsavedChangesGuard from "../components/UnsavedChangesGuard";
 import { fetchPublicConfig, uploadImage, submitSuggestion, validateImageFile } from "../utils/contentApi";
 import { LOG_ERROR } from "../utils/debug";
+import { turnstileEnabled } from "../config";
 import "./SuggestionForms.css";
 
 export default function AddEmote() {
@@ -23,7 +24,7 @@ export default function AddEmote() {
     const [localPreviewUrl, setLocalPreviewUrl] = useState(null);
     const [uploadedImage, setUploadedImage] = useState(null);
 
-    const [turnstileToken, setTurnstileToken] = useState(null);
+    const [turnstileToken, setTurnstileToken] = useState(turnstileEnabled ? null : "");
     const turnstileResetRef = useRef(null);
     const isUploadingRef = useRef(false);
 
@@ -51,7 +52,7 @@ export default function AddEmote() {
     }, [pickedFile]);
 
     useEffect(() => {
-        if (!pickedFile || !turnstileToken || uploadedImage || busy) return;
+        if (!pickedFile || turnstileToken === null || uploadedImage || busy) return;
         if (isUploadingRef.current) return;
         isUploadingRef.current = true;
 
@@ -82,7 +83,7 @@ export default function AddEmote() {
         .map((t) => t.trim())
         .filter(Boolean);
 
-    const canSubmit = name.trim().length > 0 && !!uploadedImage && !!turnstileToken && !busy;
+    const canSubmit = name.trim().length > 0 && !!uploadedImage && turnstileToken !== null && !busy;
     const isDirty =
         !success &&
         (name.trim().length > 0 ||
@@ -191,7 +192,7 @@ export default function AddEmote() {
     const previewSrc = uploadedImage ? uploadedImage.urls.preview : localPreviewUrl;
     let dropzoneOverlay = null;
     if (busy === "uploading") dropzoneOverlay = "Uploading…";
-    else if (pickedFile && !turnstileToken) dropzoneOverlay = "Waiting for verification…";
+    else if (pickedFile && turnstileToken === null) dropzoneOverlay = "Waiting for verification…";
 
     return (
         <div className="suggestion-page">
@@ -335,14 +336,16 @@ export default function AddEmote() {
                         />
                     </div>
 
-                    <div className="suggestion-turnstile-block">
-                        <span className="suggestion-field-hint">Human verification:</span>
-                        <TurnstileWidget
-                            siteKey={cfg.turnstile_site_key}
-                            onToken={setTurnstileToken}
-                            resetRef={turnstileResetRef}
-                        />
-                    </div>
+                    {turnstileEnabled && (
+                        <div className="suggestion-turnstile-block">
+                            <span className="suggestion-field-hint">Human verification:</span>
+                            <TurnstileWidget
+                                siteKey={cfg.turnstile_site_key}
+                                onToken={setTurnstileToken}
+                                resetRef={turnstileResetRef}
+                            />
+                        </div>
+                    )}
 
                     {error && <div className="suggestion-status error">{error}</div>}
 

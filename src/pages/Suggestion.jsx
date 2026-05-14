@@ -4,6 +4,7 @@ import TurnstileWidget from "../components/TurnstileWidget";
 import UnsavedChangesGuard from "../components/UnsavedChangesGuard";
 import { fetchPublicConfig, submitSuggestion } from "../utils/contentApi";
 import { LOG_ERROR } from "../utils/debug";
+import { turnstileEnabled } from "../config";
 import "./SuggestionForms.css";
 
 export default function Suggestion() {
@@ -13,7 +14,7 @@ export default function Suggestion() {
     const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
 
-    const [turnstileToken, setTurnstileToken] = useState(null);
+    const [turnstileToken, setTurnstileToken] = useState(turnstileEnabled ? null : "");
     const turnstileResetRef = useRef(null);
 
     const [busy, setBusy] = useState(null);
@@ -29,7 +30,7 @@ export default function Suggestion() {
             });
     }, []);
 
-    const canSubmit = message.trim().length > 0 && !!turnstileToken && !busy;
+    const canSubmit = message.trim().length > 0 && turnstileToken !== null && !busy;
     const isDirty = !success && (subject.trim().length > 0 || message.trim().length > 0);
 
     const handleSubmit = async (e) => {
@@ -139,14 +140,16 @@ export default function Suggestion() {
                         />
                     </div>
 
-                    <div className="suggestion-turnstile-block">
-                        <span className="suggestion-field-hint">Human verification:</span>
-                        <TurnstileWidget
-                            siteKey={cfg.turnstile_site_key}
-                            onToken={setTurnstileToken}
-                            resetRef={turnstileResetRef}
-                        />
-                    </div>
+                    {turnstileEnabled && (
+                        <div className="suggestion-turnstile-block">
+                            <span className="suggestion-field-hint">Human verification:</span>
+                            <TurnstileWidget
+                                siteKey={cfg.turnstile_site_key}
+                                onToken={setTurnstileToken}
+                                resetRef={turnstileResetRef}
+                            />
+                        </div>
+                    )}
 
                     {error && <div className="suggestion-status error">{error}</div>}
 
