@@ -5,7 +5,6 @@ import ImageDropZone from "../components/ImageDropZone";
 import UnsavedChangesGuard from "../components/UnsavedChangesGuard";
 import { fetchPublicConfig, uploadImage, submitSuggestion, validateImageFile } from "../utils/contentApi";
 import { LOG_ERROR } from "../utils/debug";
-import { turnstileEnabled } from "../config";
 import "./SuggestionForms.css";
 
 export default function AddEmote() {
@@ -24,7 +23,7 @@ export default function AddEmote() {
     const [localPreviewUrl, setLocalPreviewUrl] = useState(null);
     const [uploadedImage, setUploadedImage] = useState(null);
 
-    const [turnstileToken, setTurnstileToken] = useState(turnstileEnabled ? null : "");
+    const [turnstileToken, setTurnstileToken] = useState(null);
     const turnstileResetRef = useRef(null);
     const isUploadingRef = useRef(false);
 
@@ -40,6 +39,12 @@ export default function AddEmote() {
                 setCfgError(err.message);
             });
     }, []);
+
+    useEffect(() => {
+        if (cfg && cfg.turnstile_enabled === false) {
+            setTurnstileToken("");
+        }
+    }, [cfg]);
 
     useEffect(() => {
         if (!pickedFile) {
@@ -336,7 +341,7 @@ export default function AddEmote() {
                         />
                     </div>
 
-                    {turnstileEnabled && (
+                    {cfg.turnstile_enabled !== false && (
                         <div className="suggestion-turnstile-block">
                             <span className="suggestion-field-hint">Human verification:</span>
                             <TurnstileWidget

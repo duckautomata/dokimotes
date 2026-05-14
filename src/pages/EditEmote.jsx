@@ -5,7 +5,7 @@ import ImageDropZone from "../components/ImageDropZone";
 import UnsavedChangesGuard from "../components/UnsavedChangesGuard";
 import { fetchPublicConfig, uploadImage, submitSuggestion, validateImageFile } from "../utils/contentApi";
 import { LOG_ERROR } from "../utils/debug";
-import { cdn, turnstileEnabled } from "../config";
+import { cdn } from "../config";
 import "./SuggestionForms.css";
 
 /**
@@ -51,7 +51,7 @@ export default function EditEmote({ data }) {
     const [localPreviewUrl, setLocalPreviewUrl] = useState(null);
     const [uploadedImage, setUploadedImage] = useState(null);
 
-    const [turnstileToken, setTurnstileToken] = useState(turnstileEnabled ? null : "");
+    const [turnstileToken, setTurnstileToken] = useState(null);
     const turnstileResetRef = useRef(null);
     const isUploadingRef = useRef(false);
 
@@ -67,6 +67,12 @@ export default function EditEmote({ data }) {
                 setCfgError(err.message);
             });
     }, []);
+
+    useEffect(() => {
+        if (cfg && cfg.turnstile_enabled === false) {
+            setTurnstileToken("");
+        }
+    }, [cfg]);
 
     useEffect(() => {
         if (!emote) return;
@@ -521,7 +527,7 @@ export default function EditEmote({ data }) {
                         </div>
                     )}
 
-                    {turnstileEnabled && (
+                    {cfg.turnstile_enabled !== false && (
                         <div className="suggestion-turnstile-block">
                             <span className="suggestion-field-hint">Human verification:</span>
                             <TurnstileWidget

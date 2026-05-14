@@ -4,7 +4,6 @@ import TurnstileWidget from "../components/TurnstileWidget";
 import UnsavedChangesGuard from "../components/UnsavedChangesGuard";
 import { fetchPublicConfig, submitSuggestion } from "../utils/contentApi";
 import { LOG_ERROR } from "../utils/debug";
-import { turnstileEnabled } from "../config";
 import "./SuggestionForms.css";
 
 export default function Suggestion() {
@@ -14,7 +13,7 @@ export default function Suggestion() {
     const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
 
-    const [turnstileToken, setTurnstileToken] = useState(turnstileEnabled ? null : "");
+    const [turnstileToken, setTurnstileToken] = useState(null);
     const turnstileResetRef = useRef(null);
 
     const [busy, setBusy] = useState(null);
@@ -29,6 +28,12 @@ export default function Suggestion() {
                 setCfgError(err.message);
             });
     }, []);
+
+    useEffect(() => {
+        if (cfg && cfg.turnstile_enabled === false) {
+            setTurnstileToken("");
+        }
+    }, [cfg]);
 
     const canSubmit = message.trim().length > 0 && turnstileToken !== null && !busy;
     const isDirty = !success && (subject.trim().length > 0 || message.trim().length > 0);
@@ -140,7 +145,7 @@ export default function Suggestion() {
                         />
                     </div>
 
-                    {turnstileEnabled && (
+                    {cfg.turnstile_enabled !== false && (
                         <div className="suggestion-turnstile-block">
                             <span className="suggestion-field-hint">Human verification:</span>
                             <TurnstileWidget
