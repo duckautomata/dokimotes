@@ -23,12 +23,20 @@ _Development_
 
 ### Running Locally
 
-1. Have Node 20 or later installed
+1. Have Node 22 or later installed
 2. Clone the repo locally
 3. Run `npm install` to install dependencies
 4. Run `npm run dev` and open the site it gives you. Or press `o` and enter to open the site.
 
 Every time you save, Vite will automatically refresh the cache and the site should refresh with the new changes.
+
+#### Update Command
+
+```bash
+npx npm-check-updates -u --cooldown 7; npm install; npm audit; npm audit signatures --min-release-age=0
+```
+
+if any of the install/update commands are failing, you can add `--min-release-age=0` to it to bypass the minimum release age restriction.
 
 ### Contributing
 
