@@ -99,4 +99,42 @@ describe("Home", () => {
         expect(screen.queryByAltText("Alpha Emote")).not.toBeInTheDocument();
         expect(screen.getByAltText("Beta Emote")).toBeInTheDocument();
     });
+
+    it("collapses variants into a single grouped card with a count badge", () => {
+        const groupedData = [
+            {
+                emote_id: "primary",
+                name: "Primary Emote",
+                source: "official",
+                type: "static",
+                artist: "Artist A",
+                tags: [],
+                image_id: "imgp",
+                image_ext: ".webp",
+                variant_of: "",
+            },
+            {
+                emote_id: "variant",
+                name: "Variant Emote",
+                source: "official",
+                type: "static",
+                artist: "Artist A",
+                tags: [],
+                image_id: "imgv",
+                image_ext: ".webp",
+                variant_of: "primary",
+            },
+        ];
+
+        const { container } = render(
+            <MemoryRouter>
+                <Home data={groupedData} />
+            </MemoryRouter>,
+        );
+
+        // Only the primary renders as a card; the variant is folded into it
+        expect(screen.getByAltText("Primary Emote")).toBeInTheDocument();
+        expect(screen.queryByAltText("Variant Emote")).not.toBeInTheDocument();
+        expect(container.querySelector(".doki-card-variant-badge")).toHaveTextContent("2");
+    });
 });

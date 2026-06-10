@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import EmoteCard from "../components/EmoteCard";
 import { useAppStore } from "../store/store";
+import { buildGroups } from "../utils/variants";
 import "./Home.css";
 
 /**
@@ -42,7 +43,11 @@ export default function Home({ data }) {
         };
     }, [data]);
 
-    const filteredData = data.filter((emote) => {
+    const groups = useMemo(() => buildGroups(data), [data]);
+
+    // A group matches when any of its variants matches — so a set whose primary
+    // is static but has an animated variant still shows under Type = Animated.
+    const matchesEmote = (emote) => {
         const matchesSource = filterSource === "All" || emote.source === filterSource;
         const matchesType = filterType === "All" || emote.type === filterType;
         const matchesArtist = filterArtist === "All" || emote.artist === filterArtist;
@@ -55,7 +60,9 @@ export default function Home({ data }) {
             emote.name.toLowerCase().includes(query) ||
             (emote.tags && emote.tags.some((tag) => tag.toLowerCase().includes(query)))
         );
-    });
+    };
+
+    const filteredGroups = groups.filter((group) => group.variants.some(matchesEmote));
 
     const isFiltered = filterSource !== "All" || filterType !== "All" || filterArtist !== "All";
 
@@ -163,8 +170,12 @@ export default function Home({ data }) {
             </header>
 
             <div className="doki-grid">
-                {filteredData.map((emote) => (
-                    <EmoteCard key={emote.emote_id} emote={emote} />
+                {filteredGroups.map((group) => (
+                    <EmoteCard
+                        key={group.primary.emote_id}
+                        emote={group.primary}
+                        variantCount={group.variants.length}
+                    />
                 ))}
             </div>
         </div>

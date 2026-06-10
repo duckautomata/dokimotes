@@ -48,6 +48,22 @@ describe("EmoteCard", () => {
         expect(videoIndicator).not.toBeInTheDocument();
     });
 
+    it("renders a variant badge with the count when part of a group", () => {
+        const { container } = renderWithRouter(<EmoteCard emote={mockEmote} variantCount={3} />);
+
+        const badge = container.querySelector(".doki-card-variant-badge");
+        expect(badge).toBeInTheDocument();
+        expect(badge).toHaveTextContent("3");
+        expect(container.querySelector(".doki-card-group")).toBeInTheDocument();
+    });
+
+    it("does not render a variant badge for a standalone emote", () => {
+        const { container } = renderWithRouter(<EmoteCard emote={mockEmote} />);
+
+        expect(container.querySelector(".doki-card-variant-badge")).not.toBeInTheDocument();
+        expect(container.querySelector(".doki-card-group")).not.toBeInTheDocument();
+    });
+
     it("shows placeholder and hides image on error", () => {
         const { container } = renderWithRouter(<EmoteCard emote={mockEmote} />);
 

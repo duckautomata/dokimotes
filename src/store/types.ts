@@ -24,6 +24,14 @@ export interface EmoteData {
     type: EmoteType;
     source: EmojiSource;
     tags: string[];
+    variant_of: string;
+    _order?: number;
+}
+
+/** A primary emote together with all of its variants (the primary is included and listed first). */
+export interface EmoteGroup {
+    primary: EmoteData;
+    variants: EmoteData[];
 }
 
 // Slice Interfaces

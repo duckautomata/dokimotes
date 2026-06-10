@@ -185,6 +185,51 @@
     border-color: rgba(59, 130, 246, 0.3);
 }
 
+/* Variant group: faux-stacked cards peeking out behind, plus a count badge.
+   Drawn with box-shadow so it isn't clipped by the card's own overflow. */
+.doki-card-group {
+    box-shadow:
+        5px -5px 0 0 var(--panel-bg),
+        5px -5px 0 1px var(--panel-border),
+        10px -10px 0 0 var(--panel-bg),
+        10px -10px 0 1px var(--panel-border),
+        0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.doki-card-group:hover {
+    box-shadow:
+        5px -5px 0 0 var(--panel-bg),
+        5px -5px 0 1px var(--panel-border),
+        10px -10px 0 0 var(--panel-bg),
+        10px -10px 0 1px var(--panel-border),
+        0 12px 40px rgba(59, 130, 246, 0.2);
+}
+
+.doki-card-variant-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.15rem 0.45rem 0.15rem 0.35rem;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    background: rgba(59, 130, 246, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}
+
+.doki-card-variant-badge svg {
+    width: 12px;
+    height: 12px;
+}
+
 .doki-card-image-container {
     width: 100%;
     aspect-ratio: 1;
@@ -277,6 +322,25 @@
     .doki-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 0.75rem;
+    }
+
+    /* Smaller stack offset so it stays within the tighter grid gap. */
+    .doki-card-group {
+        box-shadow:
+            3px -3px 0 0 var(--panel-bg),
+            3px -3px 0 1px var(--panel-border),
+            6px -6px 0 0 var(--panel-bg),
+            6px -6px 0 1px var(--panel-border),
+            0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .doki-card-group:hover {
+        box-shadow:
+            3px -3px 0 0 var(--panel-bg),
+            3px -3px 0 1px var(--panel-border),
+            6px -6px 0 0 var(--panel-bg),
+            6px -6px 0 1px var(--panel-border),
+            0 12px 40px rgba(59, 130, 246, 0.2);
     }
 
     .doki-card-content {

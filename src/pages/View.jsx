@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { renderTextWithLinks } from "../utils/textUtils";
+import { getVariants } from "../utils/variants";
 import { cdn } from "../config";
 import "./View.css";
 import { LOG_ERROR } from "../utils/debug";
@@ -16,6 +17,7 @@ import { LOG_ERROR } from "../utils/debug";
 export default function View({ data }) {
     const { emote_id } = useParams();
     const emote = data.find((e) => e.emote_id === emote_id);
+    const variants = useMemo(() => getVariants(data, emote), [data, emote]);
     const [copiedLink, setCopiedLink] = useState(false);
     const [copiedImage, setCopiedImage] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
@@ -153,6 +155,30 @@ export default function View({ data }) {
                     <img src={imageUrl} alt={emote.name} className="centered-emote-image" onLoad={handleImageLoad} />
                     {emote.image_ext === ".mp4" && <div className="video-indicator"></div>}
                 </div>
+
+                {variants.length > 1 && (
+                    <div className="variant-strip" role="tablist" aria-label="Variants in this set">
+                        {variants.map((v) => {
+                            const isActive = v.emote_id === emote.emote_id;
+                            return (
+                                <Link
+                                    key={v.emote_id}
+                                    to={`/view/${v.emote_id}`}
+                                    className={`variant-thumb${isActive ? " active" : ""}`}
+                                    role="tab"
+                                    aria-selected={isActive}
+                                    title={v.name}
+                                >
+                                    <span className="variant-thumb-image">
+                                        <img src={`${cdn}/${v.image_id}_t.webp`} alt={v.name} loading="lazy" />
+                                        {v.image_ext === ".mp4" && <span className="variant-thumb-badge">▶</span>}
+                                    </span>
+                                    <span className="variant-thumb-label">{v.name}</span>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                )}
 
                 <div className="emote-details">
                     <Link to="/" className="back-link">
