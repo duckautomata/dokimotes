@@ -23,10 +23,6 @@ export default function View({ data }) {
     const [errorMsg, setErrorMsg] = useState("");
     const [fileSize, setFileSize] = useState(null);
     const [dimensions, setDimensions] = useState(null);
-    // Same-origin blob URL of the image, used so drag-out can rename the file.
-    // Chrome blocks DownloadURL drags that point at a cross-origin URL (the CDN),
-    // so we hand the drag a local blob instead.
-    const [dragUrl, setDragUrl] = useState(null);
 
     useEffect(() => {
         if (!emote) return;
@@ -58,34 +54,6 @@ export default function View({ data }) {
             isMounted = false;
             setFileSize(null);
             setDimensions(null);
-        };
-    }, [emote]);
-
-    // Prepare a same-origin blob URL so dragging the image out can rename the file
-    // to the emote name. Reuses the browser cache from the <img> fetch, so it's cheap.
-    useEffect(() => {
-        if (!emote) return;
-
-        let objectUrl = null;
-        let cancelled = false;
-        const prepareDragUrl = async () => {
-            try {
-                const response = await fetch(`${cdn}/${emote.image_id}_p.webp`);
-                const blob = await response.blob();
-                if (cancelled) return;
-                objectUrl = URL.createObjectURL(blob);
-                setDragUrl(objectUrl);
-            } catch (e) {
-                LOG_ERROR("Failed to prepare drag image:", e);
-            }
-        };
-
-        prepareDragUrl();
-
-        return () => {
-            cancelled = true;
-            if (objectUrl) URL.revokeObjectURL(objectUrl);
-            setDragUrl(null);
         };
     }, [emote]);
 
@@ -171,16 +139,6 @@ export default function View({ data }) {
         }
     };
 
-    // When the image is dragged out into another app or the file explorer, browsers
-    // name the file after the URL (the image id). Chromium honors a DownloadURL
-    // "mime:filename:url" hint on dragstart, letting us hand over the emote name instead.
-    // The URL must be same-origin (the blob), or Chrome blocks the drag-download.
-    const handleImageDragStart = (e) => {
-        if (!dragUrl) return; // blob not ready yet; fall back to default drag
-        const fileName = `${emote.name}.webp`;
-        e.dataTransfer.setData("DownloadURL", `image/webp:${fileName}:${dragUrl}`);
-    };
-
     const handleDownload = () => {
         const link = document.createElement("a");
         const fileName = `${emote.name}${emote.image_ext}`;
@@ -194,13 +152,7 @@ export default function View({ data }) {
             {errorMsg && <div className="modal-error-popup">{errorMsg}</div>}
             <div className="view-emote-card glass-panel">
                 <div className="emote-image-container">
-                    <img
-                        src={imageUrl}
-                        alt={emote.name}
-                        className="centered-emote-image"
-                        onLoad={handleImageLoad}
-                        onDragStart={handleImageDragStart}
-                    />
+                    <img src={imageUrl} alt={emote.name} className="centered-emote-image" onLoad={handleImageLoad} />
                     {emote.image_ext === ".mp4" && <div className="video-indicator"></div>}
                 </div>
 
