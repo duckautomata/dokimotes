@@ -3,7 +3,9 @@ import { Link, useParams } from "react-router-dom";
 import TurnstileWidget from "../components/TurnstileWidget";
 import ImageDropZone from "../components/ImageDropZone";
 import UnsavedChangesGuard from "../components/UnsavedChangesGuard";
+import ConfirmSubmitModal from "../components/ConfirmSubmitModal";
 import { fetchPublicConfig, uploadImage, submitSuggestion, validateImageFile } from "../utils/contentApi";
+import { saveSuggestionId } from "../utils/suggestionIds";
 import { LOG_ERROR } from "../utils/debug";
 import { cdn } from "../config";
 import "./SuggestionForms.css";
@@ -58,6 +60,7 @@ export default function EditEmote({ data }) {
     const [busy, setBusy] = useState(null);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
     useEffect(() => {
         fetchPublicConfig()
@@ -197,8 +200,15 @@ export default function EditEmote({ data }) {
         setError(null);
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
+        if (mode === "edit" ? !canSubmitEdit : !canSubmitDelete) return;
+        setError(null);
+        setConfirmOpen(true);
+    };
+
+    const performSubmit = async () => {
+        setConfirmOpen(false);
         setError(null);
 
         if (mode === "edit") {
@@ -217,6 +227,7 @@ export default function EditEmote({ data }) {
                     payload,
                     imageIds: uploadedImage ? [uploadedImage.id] : [],
                 });
+                saveSuggestionId(result.id);
                 setSuccess(result);
             } catch (err) {
                 LOG_ERROR("Submit failed", err);
@@ -237,6 +248,7 @@ export default function EditEmote({ data }) {
                         reason: reason.trim(),
                     },
                 });
+                saveSuggestionId(result.id);
                 setSuccess(result);
             } catch (err) {
                 LOG_ERROR("Submit failed", err);
@@ -285,12 +297,16 @@ export default function EditEmote({ data }) {
                     <h1 className="suggestion-title">Thanks!</h1>
                     <p className="suggestion-subtitle">
                         Your {mode === "delete" ? "deletion" : "edit"} suggestion has been submitted for review.
-                        Reference ID: <code>{success.id}</code>
+                        Reference ID: <code>{success.id}</code> (saved on this device, you can track it under My
+                        Suggestions).
                     </p>
                     <div className="suggestion-actions">
+                        <Link to="/my-suggestions" className="suggestion-submit-btn" style={{ textDecoration: "none" }}>
+                            View Status
+                        </Link>
                         <Link
                             to={`/view/${emote.emote_id}`}
-                            className="suggestion-submit-btn"
+                            className="suggestion-secondary-btn"
                             style={{ textDecoration: "none" }}
                         >
                             Back to Emote
@@ -313,6 +329,26 @@ export default function EditEmote({ data }) {
     return (
         <div className="suggestion-page">
             <UnsavedChangesGuard when={isDirty} />
+            <ConfirmSubmitModal
+                open={confirmOpen}
+                title={mode === "delete" ? "Request deletion?" : "Submit edit?"}
+                message={
+                    mode === "delete" ? (
+                        <>
+                            Request deletion of <strong>{emote.name}</strong>? An admin will review the request before
+                            anything is removed.
+                        </>
+                    ) : (
+                        <>
+                            Submit your edit suggestion for <strong>{emote.name}</strong>?
+                        </>
+                    )
+                }
+                confirmLabel={mode === "delete" ? "Request Deletion" : "Submit"}
+                danger={mode === "delete"}
+                onConfirm={performSubmit}
+                onCancel={() => setConfirmOpen(false)}
+            />
             <Link to={`/view/${emote.emote_id}`} className="suggestion-back">
                 <span className="back-arrow">←</span> Back to Emote
             </Link>

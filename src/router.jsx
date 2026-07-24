@@ -6,6 +6,7 @@ import View from "./pages/View";
 import AddEmote from "./pages/AddEmote";
 import EditEmote from "./pages/EditEmote";
 import Suggestion from "./pages/Suggestion";
+import SuggestionStatus from "./pages/SuggestionStatus";
 import RouteErrorBoundary from "./components/RouteErrorBoundary";
 
 const HomeRoute = () => {
@@ -35,6 +36,7 @@ export const router = createBrowserRouter(
                 { path: "add", element: <AddEmote />, errorElement: <RouteErrorBoundary /> },
                 { path: "edit/:emote_id", element: <EditEmoteRoute />, errorElement: <RouteErrorBoundary /> },
                 { path: "suggestion", element: <Suggestion />, errorElement: <RouteErrorBoundary /> },
+                { path: "my-suggestions", element: <SuggestionStatus />, errorElement: <RouteErrorBoundary /> },
             ],
         },
     ],

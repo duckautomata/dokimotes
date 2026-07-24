@@ -45,7 +45,7 @@ export default function Home({ data }) {
 
     const groups = useMemo(() => buildGroups(data), [data]);
 
-    // A group matches when any of its variants matches — so a set whose primary
+    // A group matches when any of its variants matches, so a set whose primary
     // is static but has an animated variant still shows under Type = Animated.
     const matchesEmote = (emote) => {
         const matchesSource = filterSource === "All" || emote.source === filterSource;

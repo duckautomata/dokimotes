@@ -46,6 +46,9 @@ export default function SuggestionsDropdown() {
                     <Link to="/suggestion" onClick={close} className="dropdown-item">
                         <span>General Suggestion</span>
                     </Link>
+                    <Link to="/my-suggestions" onClick={close} className="dropdown-item">
+                        <span>My Suggestions</span>
+                    </Link>
                 </div>
             )}
         </div>
