@@ -148,6 +148,7 @@ export default function AddEmote() {
                 kind: "new",
                 payload,
                 imageIds: [uploadedImage.id],
+                summary: `Add the emote '${payload.name}'`,
             });
             saveSuggestionId(result.id);
             setSuccess(result);

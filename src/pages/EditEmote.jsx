@@ -221,11 +221,16 @@ export default function EditEmote({ data }) {
                     notes: notes.trim(),
                 };
                 if (uploadedImage) payload.replace_image_id = uploadedImage.id;
+                const changedFields = Object.keys(editChanges);
+                if (uploadedImage) changedFields.push("image");
                 const result = await submitSuggestion({
                     token: turnstileToken,
                     kind: "edit",
                     payload,
                     imageIds: uploadedImage ? [uploadedImage.id] : [],
+                    summary: changedFields.length
+                        ? `Update the ${changedFields.join(", ")} on '${emote.name}'`
+                        : `Edit the emote '${emote.name}'`,
                 });
                 saveSuggestionId(result.id);
                 setSuccess(result);
@@ -247,6 +252,7 @@ export default function EditEmote({ data }) {
                         target_id: emote.emote_id,
                         reason: reason.trim(),
                     },
+                    summary: `Remove the emote '${emote.name}'`,
                 });
                 saveSuggestionId(result.id);
                 setSuccess(result);

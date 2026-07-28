@@ -63,6 +63,7 @@ export default function Suggestion() {
                 token: turnstileToken,
                 kind: "new",
                 payload,
+                summary: `General suggestion: ${payload.subject || payload.message}`,
             });
             saveSuggestionId(result.id);
             setSuccess(result);

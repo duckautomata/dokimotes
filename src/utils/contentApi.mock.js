@@ -1,5 +1,6 @@
 import { siteName } from "../config";
 import { LOG_MSG } from "./debug";
+import { clampSummary } from "./suggestionSummary";
 
 const MOCK_CONFIG = Object.freeze({
     turnstile_site_key: "mock-site-key",
@@ -33,8 +34,9 @@ let uploadCount = 0;
 let submitCount = 0;
 let statusCount = 0;
 
-// Ids submitted this session always report as freshly pending.
-const sessionSubmittedIds = new Set();
+// Ids submitted this session always report as freshly pending, and echo back
+// the summary they were submitted with. Maps id → summary (may be null).
+const sessionSubmittedIds = new Map();
 
 const hashId = (id) => {
     let hash = 0;
@@ -46,6 +48,12 @@ const hashId = (id) => {
 
 const MOCK_STATUSES = ["pending", "approved", "rejected", "completed"];
 const MOCK_KINDS = ["new", "edit", "delete"];
+// Stands in for the server-generated summary on ids we didn't submit ourselves.
+const MOCK_SUMMARIES = {
+    new: (name) => `Add the emote '${name}'`,
+    edit: (name) => `Update the tags on '${name}'`,
+    delete: (name) => `Remove the emote '${name}'`,
+};
 const MOCK_FEEDBACK = {
     approved: "Mock feedback: looks great!\nCropping it slightly before it goes live.",
     rejected: "Mock feedback: duplicate of an existing emote.",
@@ -82,12 +90,13 @@ export const uploadImage = async ({ token, file }) => {
     return result;
 };
 
-export const submitSuggestion = async ({ token, kind, payload, imageIds = [], site = siteName }) => {
+export const submitSuggestion = async ({ token, kind, payload, imageIds = [], site = siteName, summary }) => {
     await sleep(randomDelay(400, 800));
     submitCount += 1;
 
+    const trimmedSummary = clampSummary(summary);
     const result = { id: `sug_${randomId(13)}` };
-    sessionSubmittedIds.add(result.id);
+    sessionSubmittedIds.set(result.id, trimmedSummary);
 
     LOG_MSG(`[mock] submitSuggestion #${submitCount} →`, {
         request: {
@@ -96,6 +105,7 @@ export const submitSuggestion = async ({ token, kind, payload, imageIds = [], si
             kind,
             payload,
             image_ids: imageIds,
+            ...(trimmedSummary ? { summary: trimmedSummary } : {}),
         },
         response: result,
     });
@@ -103,13 +113,18 @@ export const submitSuggestion = async ({ token, kind, payload, imageIds = [], si
     return result;
 };
 
-// Mirrors GET /api/public/suggestions. Statuses are derived deterministically
-// from the id so reloading the page keeps them stable; ids containing
-// "missing" or "notfound" simulate deleted/unknown suggestions, and ids
-// containing "nomicon" simulate suggestions that belong to another site.
-export const fetchSuggestionStatuses = async (ids) => {
+// Mirrors GET /api/public/suggestions/{site}. Statuses are derived
+// deterministically from the id so reloading the page keeps them stable; ids
+// containing "missing" or "notfound" simulate deleted/unknown suggestions, and
+// ids containing "nomicon" simulate suggestions owned by another site, which
+// the server reports as not_found rather than returning.
+export const fetchSuggestionStatuses = async (ids, site = siteName) => {
     await sleep(randomDelay(200, 500));
     statusCount += 1;
+
+    if (!MOCK_CONFIG.allowed_sites.includes(site)) {
+        throw new Error(`Unknown site '${site}'`);
+    }
 
     const unique = [...new Set(ids)];
     const results = { suggestions: [], not_found: [] };
@@ -124,23 +139,31 @@ export const fetchSuggestionStatuses = async (ids) => {
             results.not_found.push(id);
             continue;
         }
+        const ownerSite = lower.includes("nomicon") ? "dokinomicon" : siteName;
+        if (ownerSite !== site) {
+            results.not_found.push(id);
+            continue;
+        }
         const hash = hashId(id);
-        const status = sessionSubmittedIds.has(id) ? "pending" : MOCK_STATUSES[hash % MOCK_STATUSES.length];
+        const isSessionSubmitted = sessionSubmittedIds.has(id);
+        const status = isSessionSubmitted ? "pending" : MOCK_STATUSES[hash % MOCK_STATUSES.length];
+        const kind = isSessionSubmitted ? "new" : MOCK_KINDS[hash % MOCK_KINDS.length];
         const submittedAt = new Date(now - (hash % 14) * 86400000 - (hash % 7) * 3600000);
         const updatedAt =
             status === "pending" ? submittedAt : new Date(submittedAt.getTime() + ((hash % 3) + 1) * 86400000);
         results.suggestions.push({
             id,
-            site: lower.includes("nomicon") ? "dokinomicon" : siteName,
-            kind: sessionSubmittedIds.has(id) ? "new" : MOCK_KINDS[hash % MOCK_KINDS.length],
+            site: ownerSite,
+            kind,
             status,
+            summary: sessionSubmittedIds.get(id) ?? MOCK_SUMMARIES[kind](`mock-emote-${hash % 100}`),
             submitted_at: submittedAt.toISOString(),
             updated_at: updatedAt.toISOString(),
             admin_context: MOCK_FEEDBACK[status] ?? "",
         });
     }
 
-    LOG_MSG(`[mock] fetchSuggestionStatuses #${statusCount} →`, { request: { ids }, response: results });
+    LOG_MSG(`[mock] fetchSuggestionStatuses #${statusCount} →`, { request: { ids, site }, response: results });
 
     return results;
 };

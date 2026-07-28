@@ -1,4 +1,5 @@
 import { contentApi, siteName } from "../config";
+import { clampSummary } from "./suggestionSummary";
 
 let cachedConfig = null;
 let inFlightConfig = null;
@@ -49,12 +50,16 @@ export const uploadImage = async ({ token, file }) => {
 // The server accepts at most 50 ids per request; chunk so power users don't 400.
 const STATUS_CHUNK_SIZE = 50;
 
-export const fetchSuggestionStatuses = async (ids) => {
+// The lookup is scoped to a site: ids belonging to another site are reported as
+// not_found rather than returned, so the whole saved list can be passed as-is.
+export const fetchSuggestionStatuses = async (ids, site = siteName) => {
     const unique = [...new Set(ids)];
     const results = { suggestions: [], not_found: [] };
     for (let i = 0; i < unique.length; i += STATUS_CHUNK_SIZE) {
         const chunk = unique.slice(i, i + STATUS_CHUNK_SIZE);
-        const res = await fetch(`${contentApi}/public/suggestions?ids=${encodeURIComponent(chunk.join(","))}`);
+        const res = await fetch(
+            `${contentApi}/public/suggestions/${encodeURIComponent(site)}?ids=${encodeURIComponent(chunk.join(","))}`,
+        );
         if (!res.ok) {
             throw new Error(await readErrorDetail(res));
         }
@@ -65,17 +70,22 @@ export const fetchSuggestionStatuses = async (ids) => {
     return results;
 };
 
-export const submitSuggestion = async ({ token, kind, payload, imageIds = [], site = siteName }) => {
+export const submitSuggestion = async ({ token, kind, payload, imageIds = [], site = siteName, summary }) => {
+    const body = {
+        cf_turnstile_response: token,
+        site,
+        kind,
+        payload,
+        image_ids: imageIds,
+    };
+    // Optional: omitting it lets the server generate one from the payload.
+    const trimmedSummary = clampSummary(summary);
+    if (trimmedSummary) body.summary = trimmedSummary;
+
     const res = await fetch(`${contentApi}/public/suggestion`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            cf_turnstile_response: token,
-            site,
-            kind,
-            payload,
-            image_ids: imageIds,
-        }),
+        body: JSON.stringify(body),
     });
     if (!res.ok) {
         throw new Error(await readErrorDetail(res));
