@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
  * @param {Object} props
  * @param {string} [props.accept] - Native input accept list (e.g. ".png,.jpg").
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.multiple] - Allow picking/dropping multiple files. `onSelect` is called once per file.
  * @param {(file: File) => void} props.onSelect - Called with the picked/dropped file.
  * @param {string | null} [props.previewSrc] - Image URL to render. When null, the empty state is shown.
  * @param {string | null} [props.overlay] - Status text (e.g. "Uploading…"). Hides the × button while present.
@@ -18,6 +19,7 @@ import { useRef, useState } from "react";
 export default function ImageDropZone({
     accept,
     disabled = false,
+    multiple = false,
     onSelect,
     previewSrc,
     overlay = null,
@@ -34,9 +36,15 @@ export default function ImageDropZone({
         inputRef.current?.click();
     };
 
-    const acceptFile = (file) => {
-        if (disabled || !file) return;
-        onSelect?.(file);
+    const acceptFiles = (fileList) => {
+        if (disabled || !fileList) return;
+        const files = Array.from(fileList);
+        if (files.length === 0) return;
+        if (multiple) {
+            for (const file of files) onSelect?.(file);
+        } else {
+            onSelect?.(files[0]);
+        }
     };
 
     const handleDragOver = (e) => {
@@ -54,11 +62,11 @@ export default function ImageDropZone({
     const handleDrop = (e) => {
         e.preventDefault();
         setIsDragging(false);
-        acceptFile(e.dataTransfer.files?.[0]);
+        acceptFiles(e.dataTransfer.files);
     };
 
     const handleInputChange = (e) => {
-        acceptFile(e.target.files?.[0]);
+        acceptFiles(e.target.files);
         e.target.value = "";
     };
 
@@ -100,6 +108,7 @@ export default function ImageDropZone({
                 ref={inputRef}
                 type="file"
                 accept={accept}
+                multiple={multiple}
                 onChange={handleInputChange}
                 style={{ display: "none" }}
                 disabled={disabled}

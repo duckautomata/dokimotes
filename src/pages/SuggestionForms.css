@@ -193,6 +193,80 @@
     color: var(--text-primary);
 }
 
+/* Tab strip for picking which emote of a variant set the edit form is bound
+   to. Wider and wrapping compared to the Edit/Delete mode tabs, since a set
+   can hold any number of emotes. */
+.suggestion-member-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.suggestion-member-tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.85rem 0.4rem 0.4rem;
+    border-radius: 99px;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    background: rgba(0, 0, 0, 0.15);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    max-width: 100%;
+}
+
+[data-theme="light"] .suggestion-member-tab {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.suggestion-member-tab:hover:not(.active) {
+    border-color: rgba(59, 130, 246, 0.5);
+    color: var(--text-primary);
+}
+
+.suggestion-member-tab.active {
+    border-color: rgba(59, 130, 246, 0.7);
+    background: rgba(59, 130, 246, 0.18);
+    color: var(--accent-hover);
+}
+
+.suggestion-member-tab img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: contain;
+    background: rgba(0, 0, 0, 0.25);
+    flex-shrink: 0;
+}
+
+.suggestion-member-tab-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 12ch;
+}
+
+.suggestion-member-tab-role {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+}
+
+.suggestion-member-tab-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+}
+
 .suggestion-image-block {
     display: flex;
     flex-direction: column;
@@ -308,6 +382,236 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+
+/* Vertical list of the emotes being proposed: one row per uploaded image,
+   each naming an emote in the variant set. The first row is the main emote. */
+.suggestion-image-list-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.suggestion-image-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.suggestion-image-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem;
+    border-radius: 10px;
+    border: 1px solid var(--panel-border);
+    background: rgba(0, 0, 0, 0.18);
+}
+
+[data-theme="light"] .suggestion-image-row {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.suggestion-image-row.is-main {
+    border-color: rgba(59, 130, 246, 0.5);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.suggestion-image-row-thumb {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.2);
+    background-image:
+        linear-gradient(
+            45deg,
+            var(--checkerboard) 25%,
+            transparent 25%,
+            transparent 75%,
+            var(--checkerboard) 75%,
+            var(--checkerboard)
+        ),
+        linear-gradient(
+            45deg,
+            var(--checkerboard) 25%,
+            transparent 25%,
+            transparent 75%,
+            var(--checkerboard) 75%,
+            var(--checkerboard)
+        );
+    background-size: 14px 14px;
+    background-position:
+        0 0,
+        7px 7px;
+}
+
+.suggestion-image-row-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.suggestion-image-row-fields {
+    display: flex;
+    gap: 0.4rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.suggestion-image-row-name,
+.suggestion-image-row-type {
+    padding: 0.4rem 0.55rem;
+    border-radius: 6px;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    background: rgba(0, 0, 0, 0.25);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    outline: none;
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease;
+}
+
+[data-theme="light"] .suggestion-image-row-name,
+[data-theme="light"] .suggestion-image-row-type {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(37, 99, 235, 0.25);
+}
+
+.suggestion-image-row-name:focus,
+.suggestion-image-row-type:focus {
+    border-color: rgba(59, 130, 246, 0.7);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] .suggestion-image-row-name:focus,
+[data-theme="light"] .suggestion-image-row-type:focus {
+    background: rgba(255, 255, 255, 1);
+}
+
+.suggestion-image-row-name {
+    flex: 1;
+    min-width: 0;
+    font-weight: 600;
+}
+
+.suggestion-image-row-name.is-invalid {
+    border-color: rgba(220, 38, 38, 0.6);
+}
+
+.suggestion-image-row-type {
+    appearance: none;
+    cursor: pointer;
+    width: 120px;
+    flex-shrink: 0;
+    font-weight: 600;
+    color: var(--accent-hover);
+    padding-right: 1.6rem;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.55rem center;
+    background-size: 0.85em;
+}
+
+.suggestion-image-row-type option {
+    background: var(--bg-color);
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Main/variant designation on each row of a proposed set. */
+.suggestion-role-badge,
+.suggestion-role-btn {
+    flex-shrink: 0;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 0.7rem;
+    font-family: inherit;
+}
+
+.suggestion-role-badge {
+    background: rgba(59, 130, 246, 0.25);
+    border: 1px solid rgba(59, 130, 246, 0.5);
+    color: var(--accent-hover);
+}
+
+.suggestion-role-btn {
+    background: transparent;
+    border: 1px solid var(--panel-border);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.suggestion-role-btn:hover:not(:disabled) {
+    border-color: rgba(59, 130, 246, 0.5);
+    color: var(--accent);
+}
+
+.suggestion-role-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.suggestion-image-row-remove {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    line-height: 1;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.suggestion-image-row-remove:hover:not(:disabled) {
+    background: rgba(220, 38, 38, 0.85);
+    border-color: rgba(220, 38, 38, 0.6);
+}
+
+.suggestion-image-row-remove:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.suggestion-image-add-dropzone {
+    max-width: 320px;
+}
+
+@media (max-width: 600px) {
+    .suggestion-image-row {
+        flex-wrap: wrap;
+    }
+
+    .suggestion-image-row-fields {
+        order: 3;
+        flex-basis: 100%;
+        flex-wrap: wrap;
+    }
+
+    .suggestion-image-row-name {
+        flex: 1 1 100%;
+    }
+
+    .suggestion-image-row-type {
+        flex: 1 1 110px;
+    }
 }
 
 /* Image section: top-of-form drop zone for new/replacement emote image */
