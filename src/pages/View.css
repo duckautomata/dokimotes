@@ -338,6 +338,23 @@
     transform: translateY(-2px);
 }
 
+.usage-notice {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--panel-border);
+    width: 100%;
+    max-width: 620px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.usage-notice strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
 .view-actions {
     display: flex;
     justify-content: center;

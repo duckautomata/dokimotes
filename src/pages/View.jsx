@@ -258,6 +258,13 @@ export default function View({ data }) {
                         Download Image
                     </button>
                 </div>
+
+                <p className="usage-notice">
+                    <strong>For non-commercial use only.</strong> This site archives this emote for reference and
+                    personal use. All rights remain with the original artist
+                    {emote.artist ? <> ({renderTextWithLinks(emote.artist)})</> : null}. For any commercial use, please
+                    contact the artist directly for permission.
+                </p>
             </div>
 
             <div className="view-actions">

@@ -53,6 +53,19 @@ describe("View", () => {
         expect(images).toHaveLength(1);
     });
 
+    it("renders the non-commercial use notice", () => {
+        render(
+            <MemoryRouter initialEntries={["/view/test-emote-1"]}>
+                <Routes>
+                    <Route path="/view/:emote_id" element={<View data={mockData} />} />
+                </Routes>
+            </MemoryRouter>,
+        );
+
+        expect(screen.getByText("For non-commercial use only.")).toBeInTheDocument();
+        expect(screen.getByText(/contact the artist directly for permission/)).toBeInTheDocument();
+    });
+
     it("renders a variant switcher when the emote has variants", () => {
         const groupedData = [
             {
