@@ -1,12 +1,17 @@
+import { sites } from "../../sites.config.js";
 import { siteName } from "../config";
 import { LOG_MSG } from "./debug";
 import { clampSummary } from "./suggestionSummary";
 
+// Each emote site's sister character-archive site (dokimotes → dokinomicon).
+const nomiconSiteFor = (site) => site.replace(/motes$/, "nomicon");
+
 const MOCK_CONFIG = Object.freeze({
     turnstile_site_key: "mock-site-key",
     turnstile_enabled: true,
-    allowed_sites: ["dokimotes", "dokinomicon"],
+    allowed_sites: Object.values(sites).flatMap((s) => [s.slug, nomiconSiteFor(s.slug)]),
     max_image_bytes: 26214400,
+    max_video_bytes: 104857600,
     supported_formats: ["jpg", "jpeg", "png", "webp", "avif", "gif", "mp4"],
     public_url_prefix: "https://cdn.mock",
     pending_prefix: "_suggestions/_pending/",
@@ -116,8 +121,8 @@ export const submitSuggestion = async ({ token, kind, payload, imageIds = [], si
 // Mirrors GET /api/public/suggestions/{site}. Statuses are derived
 // deterministically from the id so reloading the page keeps them stable; ids
 // containing "missing" or "notfound" simulate deleted/unknown suggestions, and
-// ids containing "nomicon" simulate suggestions owned by another site, which
-// the server reports as not_found rather than returning.
+// ids containing "nomicon" simulate suggestions owned by this site's
+// nomicon site, which the server reports as not_found rather than returning.
 export const fetchSuggestionStatuses = async (ids, site = siteName) => {
     await sleep(randomDelay(200, 500));
     statusCount += 1;
@@ -139,7 +144,7 @@ export const fetchSuggestionStatuses = async (ids, site = siteName) => {
             results.not_found.push(id);
             continue;
         }
-        const ownerSite = lower.includes("nomicon") ? "dokinomicon" : siteName;
+        const ownerSite = lower.includes("nomicon") ? nomiconSiteFor(siteName) : siteName;
         if (ownerSite !== site) {
             results.not_found.push(id);
             continue;
