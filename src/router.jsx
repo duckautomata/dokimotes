@@ -40,5 +40,5 @@ export const router = createBrowserRouter(
             ],
         },
     ],
-    { basename: "/dokimotes/" },
+    { basename: import.meta.env.BASE_URL },
 );

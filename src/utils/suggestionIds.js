@@ -1,7 +1,18 @@
+import { siteName } from "../config";
+
 // Persists the ids returned by POST /api/public/suggestion so the user can
 // look up their suggestions later. The id is an unguessable token that acts as
 // the access capability, so losing it means losing access to the status.
-const STORAGE_KEY = "suggestion_ids";
+//
+// The key is scoped by site because dokimotes and dokinomicon are served from
+// the same origin under different base paths, and localStorage is per-origin,
+// an unscoped key would leak each site's ids into the other's list.
+const STORAGE_KEY = `suggestion_ids:${siteName}`;
+
+// Before the key was scoped, dokimotes saved its ids under this bare key.
+// dokinomicon was scoped from the start, so only the dokimotes build adopts them.
+const LEGACY_STORAGE_KEY = "suggestion_ids";
+const LEGACY_SITE = "dokimotes";
 
 // Server-side id rule from the suggestion status API.
 const SUGGESTION_ID_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
@@ -14,10 +25,13 @@ export const isValidSuggestionId = (id) => typeof id === "string" && SUGGESTION_
  * @property {string} savedAt - ISO-8601 timestamp of when the id was saved.
  */
 
-/** @returns {SavedSuggestion[]} */
-export const loadSavedSuggestions = () => {
+/**
+ * @param {string} key
+ * @returns {SavedSuggestion[]} the entries with a valid id stored under `key`
+ */
+const readEntries = (key) => {
     try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw = localStorage.getItem(key);
         if (!raw) return [];
         const parsed = JSON.parse(raw);
         if (!Array.isArray(parsed)) return [];
@@ -25,6 +39,37 @@ export const loadSavedSuggestions = () => {
     } catch {
         return [];
     }
+};
+
+/**
+ * Moves ids saved under the legacy unscoped key into this site's list, then
+ * drops the legacy key. A no-op on every site but dokimotes and once the legacy
+ * key is gone. The legacy key is only removed after the merged list is saved,
+ * so a failed write never loses ids.
+ */
+const migrateLegacyIds = () => {
+    if (siteName !== LEGACY_SITE) return;
+    try {
+        if (localStorage.getItem(LEGACY_STORAGE_KEY) === null) return;
+        // Legacy ids are the older ones, so they go first. Keep the first copy of each id.
+        const merged = [];
+        const seen = new Set();
+        for (const entry of [...readEntries(LEGACY_STORAGE_KEY), ...readEntries(STORAGE_KEY)]) {
+            if (seen.has(entry.id)) continue;
+            seen.add(entry.id);
+            merged.push(entry);
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+        localStorage.removeItem(LEGACY_STORAGE_KEY);
+    } catch {
+        // Storage unavailable/full. The legacy key stays put for the next attempt.
+    }
+};
+
+/** @returns {SavedSuggestion[]} */
+export const loadSavedSuggestions = () => {
+    migrateLegacyIds();
+    return readEntries(STORAGE_KEY);
 };
 
 const persist = (entries) => {

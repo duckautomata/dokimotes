@@ -38,7 +38,7 @@
 .nav-brand {
     font-size: 1.5rem;
     font-weight: 800;
-    color: #60a5fa;
+    color: var(--accent-light);
     letter-spacing: -0.03em;
 }
 
@@ -58,17 +58,12 @@
 @media (max-width: 600px) {
     .top-nav {
         padding: 0.75rem 1rem;
-        justify-content: center;
+        flex-wrap: nowrap;
+        gap: 0.5rem;
     }
 
-    .brand-group {
-        display: none;
-    }
-
-    .brand-group {
-        display: none;
-    }
-
+    /* Only the site menu's grid button stays: the title and its badges are hidden,
+       and the badges show in the nav row instead. */
     .nav-brand {
         display: none;
     }
@@ -84,7 +79,8 @@
     .nav-links {
         gap: 0;
         justify-content: space-between;
-        width: 100%;
+        flex: 1;
+        min-width: 0;
     }
 
     .nav-main-links {
@@ -115,7 +111,7 @@
 }
 
 .nav-link.active {
-    background: rgba(59, 130, 246, 0.15);
+    background: rgba(var(--accent-rgb), 0.15);
     color: var(--accent);
     font-weight: 600;
 }

@@ -5,6 +5,7 @@ import UnsavedChangesGuard from "../components/UnsavedChangesGuard";
 import ConfirmSubmitModal from "../components/ConfirmSubmitModal";
 import { fetchPublicConfig, submitSuggestion } from "../utils/contentApi";
 import { saveSuggestionId } from "../utils/suggestionIds";
+import { site } from "../site";
 import { LOG_ERROR } from "../utils/debug";
 import "./SuggestionForms.css";
 
@@ -138,7 +139,7 @@ export default function Suggestion() {
             </Link>
             <div className="suggestion-card glass-panel">
                 <h1 className="suggestion-title">General Suggestion</h1>
-                <p className="suggestion-subtitle">Have feedback or an idea about Dokimotes? Send it here.</p>
+                <p className="suggestion-subtitle">Have feedback or an idea about {site.title}? Send it here.</p>
 
                 <form className="suggestion-form" onSubmit={handleSubmit}>
                     <div className="suggestion-field">

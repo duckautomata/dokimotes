@@ -24,6 +24,9 @@ const fetchAndParseCSV = async (url) => {
 /**
  * Loads and parses emote data from CSV files.
  *
+ * A header-only CSV resolves to an empty array (a site with no emotes yet).
+ * Fetch and parse failures reject, so the caller can show an error and retry.
+ *
  * @returns {Promise<EmoteData[]>} Promise resolving to an array of parsed emote data objects
  */
 export const loadEmoteData = async () => {
@@ -58,6 +61,6 @@ export const loadEmoteData = async () => {
         return emotes.sort(() => Math.random() - 0.5);
     } catch (error) {
         LOG_ERROR("Error loading emote data:", error);
-        return [];
+        throw error;
     }
 };

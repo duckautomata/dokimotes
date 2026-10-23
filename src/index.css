@@ -6,6 +6,11 @@
     --text-secondary: #9ba0b5;
     --accent: #3b82f6;
     --accent-hover: #60a5fa;
+    --on-accent: #fff; /* text on accent-filled buttons and badges */
+    /* Not redefined for light mode: tints and highlights look the same in both themes. */
+    --accent-rgb: 59, 130, 246; /* for rgba() tints */
+    --accent-light: #60a5fa;
+    --accent-lighter: #93c5fd;
     --panel-bg: rgba(255, 255, 255, 0.03);
     --panel-border: rgba(255, 255, 255, 0.08);
     --nav-bg: rgba(13, 15, 26, 0.8);
@@ -49,6 +54,28 @@
     --hero-title-gradient: #60a5fa;
     --checkerboard: rgba(0, 0, 0, 0.04);
     color-scheme: light;
+}
+
+/* Mint Fantome's site (data-site is set in index.jsx). These selectors are more
+   specific than both blocks above, so they win in either theme. */
+:root[data-site="mint"] {
+    --accent: #10b981;
+    --accent-hover: #34d399;
+    /* White on these greens is hard to read, so filled buttons get dark text in both themes. */
+    --on-accent: #0d0f1a;
+    --accent-rgb: 16, 185, 129;
+    --accent-light: #34d399;
+    --accent-lighter: #6ee7b7;
+    --hero-title-gradient: #34d399;
+}
+
+:root[data-site="mint"][data-theme="light"] {
+    --accent: #059669;
+    --accent-hover: #047857;
+    /* Mint's pale highlight greens are unreadable on the light background, so text gets a darker green. */
+    --accent-light: #047857;
+    --accent-lighter: #047857;
+    --hero-title-gradient: #34d399;
 }
 
 body {
@@ -199,8 +226,8 @@ button {
 .hero-image-wrapper:hover .video-indicator,
 .gallery-item:hover .video-indicator,
 .alt-image-container:hover .video-indicator {
-    background: rgba(59, 130, 246, 0.8);
+    background: rgba(var(--accent-rgb), 0.8);
     /* Accent color on hover */
     transform: translate(-50%, -50%) scale(1.1);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.5);
 }
