@@ -470,7 +470,8 @@ export default function EditEmote({ data }) {
     const maxMb = (cfg.max_image_bytes / (1024 * 1024)).toFixed(0);
     // An older server reports a single cap; a newer one gives video its own, larger one.
     const maxVideoMb = ((cfg.max_video_bytes ?? cfg.max_image_bytes) / (1024 * 1024)).toFixed(0);
-    const sizeHint = maxVideoMb === maxMb ? `up to ${maxMb} MB` : `images up to ${maxMb} MB · videos up to ${maxVideoMb} MB`;
+    const sizeHint =
+        maxVideoMb === maxMb ? `up to ${maxMb} MB` : `images up to ${maxMb} MB · videos up to ${maxVideoMb} MB`;
     const acceptList = (cfg.supported_formats ?? []).map((f) => `.${f}`).join(",");
     const currentImageUrl = `${cdn}/${activeMember.image_id}_p.webp`;
     const memberIds = new Set(setMembers.map((m) => m.emote_id));
@@ -756,10 +757,7 @@ export default function EditEmote({ data }) {
                             <div className="suggestion-image-section">
                                 <span className="suggestion-field-label">
                                     Image
-                                    <span className="suggestion-field-hint">
-                                        {" "}
-                                        Replacement is optional · {sizeHint}
-                                    </span>
+                                    <span className="suggestion-field-hint"> Replacement is optional · {sizeHint}</span>
                                 </span>
                                 <div className="suggestion-image-pair">
                                     <div className="suggestion-image-pair-item">
