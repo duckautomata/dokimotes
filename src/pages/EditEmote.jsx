@@ -468,6 +468,10 @@ export default function EditEmote({ data }) {
     }
 
     const maxMb = (cfg.max_image_bytes / (1024 * 1024)).toFixed(0);
+    // An older server reports a single cap; a newer one gives video its own, larger one.
+    const maxVideoMb = ((cfg.max_video_bytes ?? cfg.max_image_bytes) / (1024 * 1024)).toFixed(0);
+    const sizeHint =
+        maxVideoMb === maxMb ? `up to ${maxMb} MB` : `images up to ${maxMb} MB · videos up to ${maxVideoMb} MB`;
     const acceptList = (cfg.supported_formats ?? []).map((f) => `.${f}`).join(",");
     const currentImageUrl = `${cdn}/${activeMember.image_id}_p.webp`;
     const memberIds = new Set(setMembers.map((m) => m.emote_id));
@@ -570,7 +574,7 @@ export default function EditEmote({ data }) {
                                     <span className="suggestion-field-label">
                                         Emote in this set{" "}
                                         <span className="suggestion-field-hint">
-                                            edit any of them — one suggestion covers the whole set
+                                            edit any of them. One suggestion covers the whole set
                                         </span>
                                     </span>
                                     <div className="suggestion-member-tabs" role="tablist">
@@ -725,7 +729,7 @@ export default function EditEmote({ data }) {
                                     onChange={(e) => updateActive({ variantOf: e.target.value })}
                                     disabled={!!busy}
                                 >
-                                    <option value="">— None (a main emote) —</option>
+                                    <option value="">-None (a main emote)-</option>
                                     {danglingParent && (
                                         <option value={danglingParent}>{danglingParent} (unknown emote)</option>
                                     )}
@@ -753,10 +757,7 @@ export default function EditEmote({ data }) {
                             <div className="suggestion-image-section">
                                 <span className="suggestion-field-label">
                                     Image
-                                    <span className="suggestion-field-hint">
-                                        {" "}
-                                        Replacement is optional · up to {maxMb} MB
-                                    </span>
+                                    <span className="suggestion-field-hint"> Replacement is optional · {sizeHint}</span>
                                 </span>
                                 <div className="suggestion-image-pair">
                                     <div className="suggestion-image-pair-item">
@@ -873,14 +874,14 @@ export default function EditEmote({ data }) {
 
                             {cycleError && (
                                 <div className="suggestion-status error">
-                                    That grouping loops back on itself — an emote would end up a variant of itself. Pick
+                                    That grouping loops back on itself - an emote would end up a variant of itself. Pick
                                     a different &quot;Variant of&quot;.
                                 </div>
                             )}
                             {missingName && <div className="suggestion-status error">Every emote needs a name.</div>}
                             {!missingName && duplicateNames && (
                                 <div className="suggestion-status info">
-                                    Two emotes in this set share a name — double-check that&apos;s intended.
+                                    Two emotes in this set share a name - double-check that&apos;s intended.
                                 </div>
                             )}
                             {!editHasMemberChanges && !editHasNewVariants && (
@@ -902,7 +903,7 @@ export default function EditEmote({ data }) {
                                 {setMembers.length > 1 && (
                                     <>
                                         {" "}
-                                        Only this emote is requested for removal — say so in the reason if the rest of
+                                        Only this emote is requested for removal - say so in the reason if the rest of
                                         the set should go too.
                                     </>
                                 )}

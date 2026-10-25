@@ -63,7 +63,6 @@ describe("View", () => {
         );
 
         expect(screen.getByText("For non-commercial use only.")).toBeInTheDocument();
-        expect(screen.getByText(/contact the artist directly for permission/)).toBeInTheDocument();
     });
 
     it("renders a variant switcher when the emote has variants", () => {

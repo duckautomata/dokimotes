@@ -254,6 +254,10 @@ export default function AddEmote() {
     }
 
     const maxMb = (cfg.max_image_bytes / (1024 * 1024)).toFixed(0);
+    // An older server reports a single cap; a newer one gives video its own, larger one.
+    const maxVideoMb = ((cfg.max_video_bytes ?? cfg.max_image_bytes) / (1024 * 1024)).toFixed(0);
+    const sizeHint =
+        maxVideoMb === maxMb ? `up to ${maxMb} MB` : `images up to ${maxMb} MB · videos up to ${maxVideoMb} MB`;
     const acceptList = (cfg.supported_formats ?? []).map((f) => `.${f}`).join(",");
 
     let dropzoneOverlay = null;
@@ -300,7 +304,7 @@ export default function AddEmote() {
                         <span className="suggestion-field-label">
                             Emotes <span className="suggestion-field-required">*</span>{" "}
                             <span className="suggestion-field-hint">
-                                Drop one image, or several to suggest a variant set · up to {maxMb} MB ·{" "}
+                                Drop one image, or several to suggest a variant set · {sizeHint} ·{" "}
                                 {(cfg.supported_formats ?? []).join(", ")}
                             </span>
                         </span>
@@ -398,7 +402,7 @@ export default function AddEmote() {
                         {missingName && <div className="suggestion-status error">Every emote needs a name.</div>}
                         {!missingName && duplicateNames && (
                             <div className="suggestion-status info">
-                                Two emotes in this set share a name — double-check that&apos;s intended.
+                                Two emotes in this set share a name - double-check that&apos;s intended.
                             </div>
                         )}
                     </div>

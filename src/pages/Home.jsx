@@ -1,7 +1,9 @@
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import EmoteCard from "../components/EmoteCard";
 import { useAppStore } from "../store/store";
 import { buildGroups } from "../utils/variants";
+import { site } from "../site";
 import "./Home.css";
 
 /**
@@ -65,6 +67,24 @@ export default function Home({ data }) {
     const filteredGroups = groups.filter((group) => group.variants.some(matchesEmote));
 
     const isFiltered = filterSource !== "All" || filterType !== "All" || filterArtist !== "All";
+
+    // The CSV loaded but has no rows yet (e.g. a brand-new site). Filters have nothing to work on.
+    if (data.length === 0) {
+        return (
+            <div className="home-container">
+                <div className="home-empty glass-panel">
+                    <h2 className="home-empty-title">No emotes yet</h2>
+                    <p className="home-empty-text">
+                        {site.title} doesn&apos;t have any emotes yet. Know one of {site.name}&apos;s emotes that
+                        belongs here?
+                    </p>
+                    <Link to="/add" className="home-empty-action">
+                        Suggest the first emote
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="home-container">

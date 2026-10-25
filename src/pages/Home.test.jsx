@@ -137,4 +137,33 @@ describe("Home", () => {
         expect(screen.queryByAltText("Variant Emote")).not.toBeInTheDocument();
         expect(container.querySelector(".doki-card-variant-badge")).toHaveTextContent("2");
     });
+
+    it("shows a friendly empty state when the site has no emotes yet", () => {
+        const { container } = render(
+            <MemoryRouter>
+                <Home data={[]} />
+            </MemoryRouter>,
+        );
+
+        expect(screen.getByRole("heading", { name: "No emotes yet" })).toBeInTheDocument();
+        expect(screen.getByText(/Dokimotes doesn't have any emotes yet/)).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: "Suggest the first emote" })).toHaveAttribute("href", "/add");
+        // Nothing to search or filter yet
+        expect(screen.queryByPlaceholderText("Search by name or tags...")).not.toBeInTheDocument();
+        expect(container.querySelector(".doki-grid")).not.toBeInTheDocument();
+    });
+
+    it("keeps the filters, not the empty state, when the filters match nothing", () => {
+        mockStore.homeSearchText = "no such emote";
+
+        render(
+            <MemoryRouter>
+                <Home data={mockData} />
+            </MemoryRouter>,
+        );
+
+        expect(screen.queryByText("No emotes yet")).not.toBeInTheDocument();
+        expect(screen.getByPlaceholderText("Search by name or tags...")).toHaveValue("no such emote");
+        expect(screen.queryByAltText("Alpha Emote")).not.toBeInTheDocument();
+    });
 });

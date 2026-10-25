@@ -6,6 +6,11 @@
     --text-secondary: #9ba0b5;
     --accent: #3b82f6;
     --accent-hover: #60a5fa;
+    --on-accent: #fff; /* text on accent-filled buttons and badges */
+    /* Not redefined for light mode: tints and highlights look the same in both themes. */
+    --accent-rgb: 59, 130, 246; /* for rgba() tints */
+    --accent-light: #60a5fa;
+    --accent-lighter: #93c5fd;
     --panel-bg: rgba(255, 255, 255, 0.03);
     --panel-border: rgba(255, 255, 255, 0.08);
     --nav-bg: rgba(13, 15, 26, 0.8);
@@ -14,16 +19,30 @@
     --hero-title-gradient: #60a5fa;
     --checkerboard: rgba(255, 255, 255, 0.03);
 
+    /* Form controls, media backdrops and faint inset panels. Dark mode tints
+       toward black; light mode can't follow, because a black tint over a pale
+       page reads as mid-gray and swallows the dark text sitting on it. Every
+       one of these is redefined for light mode below. */
+    --input-bg: rgba(0, 0, 0, 0.2);
+    --input-bg-focus: rgba(0, 0, 0, 0.4);
+    --input-border: rgba(var(--accent-rgb), 0.3);
+    --input-border-focus: rgba(var(--accent-rgb), 0.8);
+    --input-shadow: none;
+    --input-shadow-focus: 0 0 15px rgba(var(--accent-rgb), 0.2);
+    --media-bg: rgba(0, 0, 0, 0.2);
+    --surface-inset: rgba(0, 0, 0, 0.18);
+    --hover-overlay: rgba(255, 255, 255, 0.1);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+    /* The oversized initial behind a missing image. */
+    --placeholder-ink-faint: rgba(255, 255, 255, 0.05);
+    /* Error and success wording. The tints they sit on stay the same in both
+       themes, so only the ink darkens for light mode. */
+    --danger-text: #f87171;
+    --success-text: #4ade80;
+
     font-family:
-        "Inter",
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        sans-serif;
+        "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color-scheme: dark;
     color: var(--text-primary);
     background-color: var(--bg-color);
@@ -48,7 +67,46 @@
     --overlay-color-rgb: 248, 250, 252;
     --hero-title-gradient: #60a5fa;
     --checkerboard: rgba(0, 0, 0, 0.04);
+
+    /* Controls are white and lifted by a hairline shadow rather than filled with
+       a gray tint, and focus adds an accent ring instead of darkening the field. */
+    --input-bg: #fff;
+    --input-bg-focus: #fff;
+    --input-border: rgba(var(--accent-rgb), 0.35);
+    --input-border-focus: var(--accent);
+    --input-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+    --input-shadow-focus: 0 0 0 3px rgba(var(--accent-rgb), 0.18), 0 1px 2px rgba(15, 23, 42, 0.06);
+    --media-bg: rgba(15, 23, 42, 0.06);
+    --surface-inset: rgba(15, 23, 42, 0.04);
+    --hover-overlay: rgba(15, 23, 42, 0.06);
+    --scrollbar-thumb: rgba(15, 23, 42, 0.25);
+    --scrollbar-thumb-hover: rgba(15, 23, 42, 0.4);
+    --placeholder-ink-faint: rgba(15, 23, 42, 0.04);
+    --danger-text: #b91c1c;
+    --success-text: #15803d;
     color-scheme: light;
+}
+
+/* Mint Fantome's site (data-site is set in index.jsx). These selectors are more
+   specific than both blocks above, so they win in either theme. */
+:root[data-site="mint"] {
+    --accent: #10b981;
+    --accent-hover: #34d399;
+    /* White on these greens is hard to read, so filled buttons get dark text in both themes. */
+    --on-accent: #0d0f1a;
+    --accent-rgb: 16, 185, 129;
+    --accent-light: #34d399;
+    --accent-lighter: #6ee7b7;
+    --hero-title-gradient: #34d399;
+}
+
+:root[data-site="mint"][data-theme="light"] {
+    --accent: #059669;
+    --accent-hover: #047857;
+    /* Mint's pale highlight greens are unreadable on the light background, so text gets a darker green. */
+    --accent-light: #047857;
+    --accent-lighter: #047857;
+    --hero-title-gradient: #34d399;
 }
 
 body {
@@ -120,12 +178,12 @@ p {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--scrollbar-thumb);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--scrollbar-thumb-hover);
 }
 
 button {
@@ -157,7 +215,7 @@ button {
 
 .search-clear-button:hover {
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--hover-overlay);
 }
 
 /* Video Indicator Overlay */
@@ -199,8 +257,8 @@ button {
 .hero-image-wrapper:hover .video-indicator,
 .gallery-item:hover .video-indicator,
 .alt-image-container:hover .video-indicator {
-    background: rgba(59, 130, 246, 0.8);
+    background: rgba(var(--accent-rgb), 0.8);
     /* Accent color on hover */
     transform: translate(-50%, -50%) scale(1.1);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.5);
 }
