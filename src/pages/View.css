@@ -69,7 +69,7 @@
     max-height: 512px;
     object-fit: contain;
     display: block;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--media-bg);
     background-image:
         linear-gradient(
             45deg,
@@ -139,7 +139,7 @@
     overflow: hidden;
     border: 2px solid var(--panel-border);
     box-sizing: border-box;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--media-bg);
     background-image:
         linear-gradient(
             45deg,
@@ -336,6 +336,18 @@
     background: rgba(255, 255, 255, 0.15);
     border-color: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px);
+}
+
+/* White tints on the pale page leave nothing to see, so light mode tints the
+   other way to keep the button distinct from the panel behind it. */
+[data-theme="light"] .secondary-btn {
+    background: rgba(15, 23, 42, 0.06);
+    border-color: rgba(15, 23, 42, 0.14);
+}
+
+[data-theme="light"] .secondary-btn:hover {
+    background: rgba(15, 23, 42, 0.1);
+    border-color: rgba(15, 23, 42, 0.22);
 }
 
 .usage-notice {
